@@ -200,40 +200,23 @@ check_uuid() {
     done
 }
 
-enter_user_data_add_ws() {
-    echo -e "${textcolor}[?]${clear} Enter the name of the new user or enter ${textcolor}x${clear} to exit:"
-    read username
-    [[ ! -z $username ]] && echo ""
-    check_username_add
-    exit_username
-    echo -e "${textcolor}[?]${clear} Enter the password for Trojan or leave this empty to generate a random password:"
-    read trjpass
-    [[ ! -z $trjpass ]] && echo ""
-    check_trjpass
-    echo -e "${textcolor}[?]${clear} Enter the UUID for VLESS or leave this empty to generate a random UUID:"
-    read uuid
-    [[ ! -z $uuid ]] && echo ""
-    check_uuid
-}
-
-enter_user_data_add_haproxy() {
-    echo -e "${textcolor}[?]${clear} Enter the name of the new user or enter ${textcolor}x${clear} to exit:"
-    read username
-    [[ ! -z $username ]] && echo ""
-    check_username_add
-    exit_username
-    echo -e "${textcolor}[?]${clear} Enter the password for Trojan or leave this empty to generate a random password:"
-    read trjpass
-    [[ ! -z $trjpass ]] && echo ""
-    check_trjpass
-}
-
 enter_user_data_add() {
-    if [ -f /etc/haproxy/auth.lua ]
+    echo -e "${textcolor}[?]${clear} Enter the name of the new user or enter ${textcolor}x${clear} to exit:"
+    read username
+    [[ ! -z $username ]] && echo ""
+    check_username_add
+    exit_username
+    echo -e "${textcolor}[?]${clear} Enter the password for Trojan or leave this empty to generate a random password:"
+    read trjpass
+    [[ ! -z $trjpass ]] && echo ""
+    check_trjpass
+
+    if [ ! -f /etc/haproxy/auth.lua ]
     then
-        enter_user_data_add_haproxy
-    else
-        enter_user_data_add_ws
+        echo -e "${textcolor}[?]${clear} Enter the UUID for VLESS or leave this empty to generate a random UUID:"
+        read uuid
+        [[ ! -z $uuid ]] && echo ""
+        check_uuid
     fi
 }
 
@@ -598,24 +581,6 @@ change_stack() {
     done
 }
 
-sync_with_github() {
-    sync_github_message
-    exit_sync
-    check_users
-    validate_template
-    sync_client_configs_github
-    main_menu
-}
-
-sync_with_local_temp() {
-    sync_local_message
-    exit_sync
-    check_users
-    validate_local_template
-    sync_client_configs_local
-    main_menu
-}
-
 sync_client_configs() {
     echo -e "${textcolor}Select synchronisation option:${clear}"
     echo "0 - Exit"
@@ -626,10 +591,20 @@ sync_client_configs() {
 
     case $syncoption in
         1)
-        sync_with_github
+        sync_github_message
+        exit_sync
+        check_users
+        validate_template
+        sync_client_configs_github
+        main_menu
         ;;
         2)
-        sync_with_local_temp
+        sync_local_message
+        exit_sync
+        check_users
+        validate_local_template
+        sync_client_configs_local
+        main_menu
         ;;
         *)
         main_menu
