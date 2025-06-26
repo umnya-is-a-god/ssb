@@ -1252,6 +1252,12 @@ setup_warp() {
     systemctl restart warp-svc.service
     systemctl enable warp-svc.service
     echo ""
+
+    if [[ "$(curl -s -o /dev/null -w "%{http_code}" -x socks5://127.0.0.1:40000 https://cloudflare.com/cdn-cgi/trace)" != "200" ]]
+    then
+        echo -e "${red}Error: could not connect to WARP${clear}"
+        echo ""
+    fi
 }
 
 generate_pass() {
@@ -1652,7 +1658,6 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "wink",
           "kion",
           "roblox",
-          "ozon",
           "wildberries",
           "aliexpress"
         ],
@@ -1661,6 +1666,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "yandex",
           "vk",
           "mailru",
+          "ozon",
           "zoom",
           "reddit",
           "twitch",
@@ -1838,7 +1844,6 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "wink",
           "kion",
           "roblox",
-          "ozon",
           "wildberries",
           "aliexpress"
         ],
@@ -1850,6 +1855,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "yandex",
           "vk",
           "mailru",
+          "ozon",
           "zoom",
           "reddit",
           "twitch",
@@ -1952,6 +1958,12 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-mailru.srs"
+      },
+      {
+        "tag": "ozon",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://${domain}/${rulesetpath}/geosite-ozon.srs"
       },
       {
         "tag": "zoom",
