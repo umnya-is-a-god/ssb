@@ -865,22 +865,10 @@ chain_end() {
         echo "$(jq '.route.rules[.route.rules | length] |= . + {"rule_set":["google"],"outbound":"IPv4"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google telegram openai)
+    rule_sets=(google telegram openai google-deepmind)
 
     for ruleset_tag in "${rule_sets[@]}"
     do
-        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "false" ]]
-        then
-            echo "$(jq ".route.rule_set[.route.rule_set | length] |= . + {\"tag\":\"${ruleset_tag}\",\"type\":\"local\",\"format\":\"binary\",\"path\":\"/var/www/${rulesetpath}/geosite-${ruleset_tag}.srs\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-        fi
-    done
-
-    sed -i -e "s/$temprulesetpath/$rulesetpath/g" /etc/sing-box/config.json
-
-    for i in $(seq 0 $(expr $(jq ".route.rules[${warpnum}].rule_set | length" /etc/sing-box/config.json) - 1))
-    do
-        ruleset_tag=$(jq -r ".route.rules[${warpnum}].rule_set[${i}]" /etc/sing-box/config.json)
-
         if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "false" ]]
         then
             echo "$(jq ".route.rule_set[.route.rule_set | length] |= . + {\"tag\":\"${ruleset_tag}\",\"type\":\"local\",\"format\":\"binary\",\"path\":\"/var/www/${rulesetpath}/geosite-${ruleset_tag}.srs\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
@@ -894,7 +882,6 @@ chain_end() {
     done
 
     systemctl reload sing-box.service
-
     echo "Изменение настроек завершено"
     echo ""
     main_menu
@@ -942,7 +929,7 @@ chain_middle() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google telegram openai)
+    rule_sets=(google telegram openai google-deepmind)
 
     for ruleset_tag in "${rule_sets[@]}"
     do
@@ -953,7 +940,6 @@ chain_middle() {
     done
 
     systemctl reload sing-box.service
-
     echo "Изменение настроек завершено"
     echo ""
     main_menu
@@ -1314,10 +1300,8 @@ change_domain() {
     done
 
     sed -i -e "s/$old_domain/$domain/g" /var/www/${subspath}/sub.html
-
     echo ""
     echo -e "Домен ${textcolor}${old_domain}${clear} заменён на ${textcolor}${domain}${clear}"
-
     echo ""
     main_menu
 }
@@ -1421,7 +1405,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.2"
+    export version="1.2.3"
     export language="1"
     export -f get_ip
     export -f templates

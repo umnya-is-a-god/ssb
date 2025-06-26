@@ -1296,7 +1296,6 @@ generate_pass() {
 
 download_rule_sets() {
     mkdir /var/www/${rulesetpath}
-
     wget -P /var/www/${rulesetpath} https://raw.githubusercontent.com/FPPweb3/sb-rule-sets/main/torrent-clients.json
     wget -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geoip/raw/rule-set/geoip-ru.srs
 
@@ -1322,7 +1321,6 @@ download_rule_sets() {
     done
 
     chmod -R 755 /var/www/${rulesetpath}
-
     wget -O /usr/local/bin/rsupdate https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/ruleset-update.sh
     chmod +x /usr/local/bin/rsupdate
     { crontab -l; echo "10 2 * * * /usr/local/bin/rsupdate"; } | crontab -
@@ -1444,6 +1442,7 @@ cat > /etc/sing-box/config.json <<EOF
           "geoip-ru",
           "gov-ru",
           "openai",
+          "google-deepmind",
           "telegram"
         ],
         "domain_suffix": [
@@ -1455,26 +1454,10 @@ cat > /etc/sing-box/config.json <<EOF
           "rutracker.cc",
           "habr.com",
           "ntc.party",
-          "gemini.google.com",
-          "bard.google.com",
-          "aistudio.google.com",
-          "makersuite.google.com",
-          "alkalimakersuite-pa.clients6.google.com",
-          "alkalicore-pa.clients6.google.com",
-          "aida.googleapis.com",
-          "generativelanguage.googleapis.com",
-          "proactivebackend-pa.googleapis.com",
-          "geller-pa.googleapis.com",
-          "deepmind.com",
-          "deepmind.google",
-          "generativeai.google",
-          "ai.google.dev",
           "canva.com"
         ],
         "domain_keyword": [
-          "xn--",
-          "generativelanguage",
-          "generativeai"
+          "xn--"
         ],
         "outbound": "warp"
       },
@@ -1509,6 +1492,12 @@ cat > /etc/sing-box/config.json <<EOF
         "type": "local",
         "format": "binary",
         "path": "/var/www/${rulesetpath}/geosite-openai.srs"
+      },
+      {
+        "tag": "google-deepmind",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/${rulesetpath}/geosite-google-deepmind.srs"
       },
       {
         "tag": "telegram",
@@ -1645,7 +1634,6 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "diginetica",
           "kinescopecdn",
           "researchgate",
-          "springer",
           "nextcloud",
           "wiki",
           "kaspersky",
@@ -1694,6 +1682,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "canonical",
           "python",
           "doi",
+          "springer",
           "elsevier",
           "sciencedirect",
           "clarivate",
@@ -1831,7 +1820,6 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "diginetica",
           "kinescopecdn",
           "researchgate",
-          "springer",
           "nextcloud",
           "wiki",
           "kaspersky",
@@ -1883,6 +1871,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "canonical",
           "python",
           "doi",
+          "springer",
           "elsevier",
           "sciencedirect",
           "clarivate",
@@ -2132,6 +2121,12 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-doi.srs"
+      },
+      {
+        "tag": "springer",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://${domain}/${rulesetpath}/geosite-springer.srs"
       },
       {
         "tag": "elsevier",
