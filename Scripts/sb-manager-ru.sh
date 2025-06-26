@@ -200,40 +200,23 @@ check_uuid() {
     done
 }
 
-enter_user_data_add_ws() {
-    echo -e "${textcolor}[?]${clear} Введите имя нового пользователя или введите ${textcolor}x${clear}, чтобы закончить:"
-    read username
-    [[ ! -z $username ]] && echo ""
-    check_username_add
-    exit_username
-    echo -e "${textcolor}[?]${clear} Введите пароль для Trojan или оставьте пустым для генерации случайного пароля:"
-    read trjpass
-    [[ ! -z $trjpass ]] && echo ""
-    check_trjpass
-    echo -e "${textcolor}[?]${clear} Введите UUID для VLESS или оставьте пустым для генерации случайного UUID:"
-    read uuid
-    [[ ! -z $uuid ]] && echo ""
-    check_uuid
-}
-
-enter_user_data_add_haproxy() {
-    echo -e "${textcolor}[?]${clear} Введите имя нового пользователя или введите ${textcolor}x${clear}, чтобы закончить:"
-    read username
-    [[ ! -z $username ]] && echo ""
-    check_username_add
-    exit_username
-    echo -e "${textcolor}[?]${clear} Введите пароль для Trojan или оставьте пустым для генерации случайного пароля:"
-    read trjpass
-    [[ ! -z $trjpass ]] && echo ""
-    check_trjpass
-}
-
 enter_user_data_add() {
-    if [ -f /etc/haproxy/auth.lua ]
+    echo -e "${textcolor}[?]${clear} Введите имя нового пользователя или введите ${textcolor}x${clear}, чтобы закончить:"
+    read username
+    [[ ! -z $username ]] && echo ""
+    check_username_add
+    exit_username
+    echo -e "${textcolor}[?]${clear} Введите пароль для Trojan или оставьте пустым для генерации случайного пароля:"
+    read trjpass
+    [[ ! -z $trjpass ]] && echo ""
+    check_trjpass
+
+    if [ ! -f /etc/haproxy/auth.lua ]
     then
-        enter_user_data_add_haproxy
-    else
-        enter_user_data_add_ws
+        echo -e "${textcolor}[?]${clear} Введите UUID для VLESS или оставьте пустым для генерации случайного UUID:"
+        read uuid
+        [[ ! -z $uuid ]] && echo ""
+        check_uuid
     fi
 }
 
@@ -598,24 +581,6 @@ change_stack() {
     done
 }
 
-sync_with_github() {
-    sync_github_message
-    exit_sync
-    check_users
-    validate_template
-    sync_client_configs_github
-    main_menu
-}
-
-sync_with_local_temp() {
-    sync_local_message
-    exit_sync
-    check_users
-    validate_local_template
-    sync_client_configs_local
-    main_menu
-}
-
 sync_client_configs() {
     echo -e "${textcolor}Выберите вариант синхронизации:${clear}"
     echo "0 - Выйти"
@@ -626,10 +591,20 @@ sync_client_configs() {
 
     case $syncoption in
         1)
-        sync_with_github
+        sync_github_message
+        exit_sync
+        check_users
+        validate_template
+        sync_client_configs_github
+        main_menu
         ;;
         2)
-        sync_with_local_temp
+        sync_local_message
+        exit_sync
+        check_users
+        validate_local_template
+        sync_client_configs_local
+        main_menu
         ;;
         *)
         main_menu
