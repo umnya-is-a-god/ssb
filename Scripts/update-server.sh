@@ -16,7 +16,7 @@ check_parent() {
 }
 
 check_update() {
-    new_version="1.2.2"
+    new_version="1.2.3"
 
     if [[ "${version}" == "${new_version}" ]]
     then
@@ -118,7 +118,7 @@ insert_chain() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google telegram openai)
+    rule_sets=(google telegram openai google-deepmind)
 
     for ruleset_tag in "${rule_sets[@]}"
     do

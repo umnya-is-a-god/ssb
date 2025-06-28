@@ -86,7 +86,6 @@
           "diginetica",
           "kinescopecdn",
           "researchgate",
-          "springer",
           "nextcloud",
           "wiki",
           "kaspersky",
@@ -135,6 +134,7 @@
           "canonical",
           "python",
           "doi",
+          "springer",
           "elsevier",
           "sciencedirect",
           "clarivate",
@@ -272,7 +272,6 @@
           "diginetica",
           "kinescopecdn",
           "researchgate",
-          "springer",
           "nextcloud",
           "wiki",
           "kaspersky",
@@ -324,6 +323,7 @@
           "canonical",
           "python",
           "doi",
+          "springer",
           "elsevier",
           "sciencedirect",
           "clarivate",
@@ -573,6 +573,12 @@
         "type": "remote",
         "format": "binary",
         "url": "https://DOMAIN/RULESETPATH/geosite-doi.srs"
+      },
+      {
+        "tag": "springer",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://DOMAIN/RULESETPATH/geosite-springer.srs"
       },
       {
         "tag": "elsevier",
