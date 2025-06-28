@@ -877,10 +877,10 @@ chain_end() {
         if [ ! -f /var/www/${rulesetpath}/geosite-${ruleset_tag}.srs ]
         then
             wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/geosite-${ruleset_tag}.srs
-            chmod -R 755 /var/www/${rulesetpath}
         fi
     done
 
+    chmod -R 755 /var/www/${rulesetpath}
     systemctl reload sing-box.service
     echo "Изменение настроек завершено"
     echo ""
