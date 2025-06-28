@@ -1252,12 +1252,6 @@ setup_warp() {
     systemctl restart warp-svc.service
     systemctl enable warp-svc.service
     echo ""
-
-    if [[ "$(curl -s -o /dev/null -w "%{http_code}" -x socks5://127.0.0.1:40000 https://cloudflare.com/cdn-cgi/trace)" != "200" ]]
-    then
-        echo -e "${red}Error: could not connect to WARP${clear}"
-        echo ""
-    fi
 }
 
 generate_pass() {
