@@ -118,7 +118,7 @@ insert_chain() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google telegram openai google-deepmind)
+    rule_sets=(telegram google google-deepmind openai)
 
     for ruleset_tag in "${rule_sets[@]}"
     do

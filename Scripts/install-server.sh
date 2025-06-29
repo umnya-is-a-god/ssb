@@ -1476,22 +1476,10 @@ cat > /etc/sing-box/config.json <<EOF
         "path": "/var/www/${rulesetpath}/geosite-category-gov-ru.srs"
       },
       {
-        "tag": "google",
+        "tag": "category-ads-all",
         "type": "local",
         "format": "binary",
-        "path": "/var/www/${rulesetpath}/geosite-google.srs"
-      },
-      {
-        "tag": "openai",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/${rulesetpath}/geosite-openai.srs"
-      },
-      {
-        "tag": "google-deepmind",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/${rulesetpath}/geosite-google-deepmind.srs"
+        "path": "/var/www/${rulesetpath}/geosite-category-ads-all.srs"
       },
       {
         "tag": "telegram",
@@ -1500,10 +1488,22 @@ cat > /etc/sing-box/config.json <<EOF
         "path": "/var/www/${rulesetpath}/geosite-telegram.srs"
       },
       {
-        "tag": "category-ads-all",
+        "tag": "google",
         "type": "local",
         "format": "binary",
-        "path": "/var/www/${rulesetpath}/geosite-category-ads-all.srs"
+        "path": "/var/www/${rulesetpath}/geosite-google.srs"
+      },
+      {
+        "tag": "google-deepmind",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/${rulesetpath}/geosite-google-deepmind.srs"
+      },
+      {
+        "tag": "openai",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/${rulesetpath}/geosite-openai.srs"
       }
     ]
   },

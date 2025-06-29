@@ -149,22 +149,10 @@
         "path": "/var/www/RULESETPATH/geosite-category-gov-ru.srs"
       },
       {
-        "tag": "google",
+        "tag": "category-ads-all",
         "type": "local",
         "format": "binary",
-        "path": "/var/www/RULESETPATH/geosite-google.srs"
-      },
-      {
-        "tag": "openai",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/RULESETPATH/geosite-openai.srs"
-      },
-      {
-        "tag": "google-deepmind",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/RULESETPATH/geosite-google-deepmind.srs"
+        "path": "/var/www/RULESETPATH/geosite-category-ads-all.srs"
       },
       {
         "tag": "telegram",
@@ -173,10 +161,22 @@
         "path": "/var/www/RULESETPATH/geosite-telegram.srs"
       },
       {
-        "tag": "category-ads-all",
+        "tag": "google",
         "type": "local",
         "format": "binary",
-        "path": "/var/www/RULESETPATH/geosite-category-ads-all.srs"
+        "path": "/var/www/RULESETPATH/geosite-google.srs"
+      },
+      {
+        "tag": "google-deepmind",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/RULESETPATH/geosite-google-deepmind.srs"
+      },
+      {
+        "tag": "openai",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/RULESETPATH/geosite-openai.srs"
       }
     ]
   },
