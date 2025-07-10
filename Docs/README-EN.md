@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://github.com/user-attachments/assets/1b2ec02b-6bf6-4c62-b8e3-bfba4aaafd93" alt="SSB Logo" width="325" height="auto">
     <h1>SECRET SING-BOX</h1>
-    <a href="https://github.com/A-Zuro/Secret-Sing-Box/blob/main/README.md">Русский</a> | English<br><br>
+    <a href="https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README.md">Русский</a> | English<br><br>
 </div>
 
 ### Easy setup of a proxy with TLS termination on NGINX or HAProxy
