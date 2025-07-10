@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
     <title>SSB</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
         function getParameterByName(name) {
@@ -33,97 +33,114 @@
     </script>
     <style>
         body {
-            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            text-align: center;
+            justify-content: center;
+
+            @media screen and (min-width: 600px) {
+                align-items: center;
+            }
+
+            display: flex;
             background-image: url('background.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: top left;
             background-attachment: fixed;
-            text-align: center;
         }
 
-        h2 {
-            font-family: Arial, sans-serif;
-            color: #000000;
+        @media screen and (min-width: 600px) {
+            .frame {
+                width: 365px;
+                background-color: rgba(0, 0, 110, 0.01);
+                box-shadow: inset 0 0 20px rgba(0, 0, 110, 0.2);
+                border-radius: 20px;
+                padding: 18.5rem 0rem;
+                position: absolute;
+                z-index: -1;
+            }
         }
 
         h3 {
-            font-family: Arial, sans-serif;
             font-weight: normal;
-            color: #000000;
             line-height: 0.1em;
         }
 
         p {
-            font-family: Arial, sans-serif;
             font-size: 15px;
-            color: #000000;
         }
 
         .button {
-            background-color: rgba(25, 25, 25, 0.1);
-            color: #000000;
+            background-color: rgba(25, 25, 135, 0.1);
+            box-shadow: 2px 2px 4px rgba(0, 0, 100, 0.2), inset -2px -2px 4px rgba(0, 0, 100, 0.15);
             border: 1px solid black;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin: 8px 4px;
-            cursor: pointer;
             border-radius: 4px;
-            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 8px 4px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
         }
 
         .button:hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 100, 0.2);
         }
 
         input {
-            padding: 5px 10px;
-            font-size: 14px;
+            width: 230px;
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 100, 0.1);
             border: 1px solid black;
             border-radius: 4px;
-            width: 230px;
+            padding: 5px 10px;
+            font-size: 14px;
         }
 
         input:hover {
-            background-color: rgba(240, 240, 240, 1);
+            background-color: rgba(240, 240, 248, 0.7);
         }
     </style>
 </head>
 
 <body>
-    <h2 style="line-height: 2.5em;">1. Download the app</h2>
-    <h3>- Android and iOS -</h3>
-    <button class="button"
-        onclick="window.open('https://play.google.com/store/apps/details?id=io.nekohasekai.sfa', '_blank')">Android</button>
-    <button class="button"
-        onclick="window.open('https://apps.apple.com/us/app/sing-box-vt/id6673731168', '_blank')">iOS</button>
-    <br><br>
-    <h3>- Windows -</h3>
-    <button class="button"
-        onclick="window.open('https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/Sing-Box-Windows-en.md', '_blank')">Recommended
-        method</button>
-    <button class="button" onclick="window.open('https://github.com/hiddify/hiddify-app/releases/latest', '_blank')">Or
-        download Hiddify</button>
-    <br><br>
-    <h3>- Linux -</h3>
-    <button class="button"
-        onclick="window.open('https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/README-EN.md#client-setup', '_blank')">Recommended
-        method</button>
-    <button class="button" onclick="window.open('https://github.com/hiddify/hiddify-app/releases/latest', '_blank')">Or
-        download Hiddify</button>
-    <br><br>
-    <h2 style="line-height: 1.2em;">2. Connect to the server</h2>
-    <p style="line-height: 2em;"><i>For Android, iOS and Windows (Hiddify)</i></p>
-    <p>
-    <form onsubmit="return false;">
-        <input type="text" placeholder="Enter your username..." id="nameInput" required><br><br>
-        <button class="button" onclick="openTrojanUrl()">Open Trojan URL</button>
-    </form>
-    </p>
-    <br>
+    <div class="frame"></div>
+
+    <div>
+        <h2 style="line-height: 2em;">1. Download the app</h2>
+        <h3>- Android and iOS -</h3>
+        <button class="button"
+            onclick="window.open('https://play.google.com/store/apps/details?id=io.nekohasekai.sfa', '_blank')">Android</button>
+        <button class="button"
+            onclick="window.open('https://apps.apple.com/us/app/sing-box-vt/id6673731168', '_blank')">  iOS  </button>
+        <br><br>
+        <h3>- Windows -</h3>
+        <button class="button"
+            onclick="window.open('https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/Sing-Box-Windows-en.md', '_blank')">Sing-Box
+            core</button>
+        or
+        <button class="button"
+            onclick="window.open('https://github.com/hiddify/hiddify-app/releases/latest', '_blank')"> Hiddify
+            client </button>
+        <br><br>
+        <h3>- Linux -</h3>
+        <button class="button"
+            onclick="window.open('https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/README-EN.md#client-setup', '_blank')">Sing-Box
+            core</button>
+        or
+        <button class="button"
+            onclick="window.open('https://github.com/hiddify/hiddify-app/releases/latest', '_blank')"> Hiddify
+            client </button>
+        <br><br>
+        <h2 style="line-height: 1em;">2. Connect to the server</h2>
+        <p style="line-height: 2em;"><i>For Android, iOS and Windows (Hiddify)</i></p>
+        <p>
+        <form onsubmit="return false;">
+            <input type="text" placeholder="Enter your username..." id="nameInput" required><br><br>
+            <button class="button" onclick="openTrojanUrl()">  Open Trojan URL  </button>
+        </form>
+        </p>
+        <br>
+    </div>
 </body>
 
 </html>

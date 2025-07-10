@@ -1404,15 +1404,15 @@ cat > /etc/sing-box/config.json <<EOF
       "tag": "direct"
     },
     {
-      "type": "direct",
-      "tag": "IPv4",
-      "domain_strategy": "ipv4_only"
-    },
-    {
       "type": "socks",
       "tag": "warp",
       "server": "127.0.0.1",
       "server_port": 40000
+    },
+    {
+      "type": "direct",
+      "tag": "IPv4",
+      "domain_strategy": "ipv4_only"
     }
   ],
   "route": {
@@ -2513,7 +2513,7 @@ http {
         add_header X-XSS-Protection          "1; mode=block" always;
         add_header X-Content-Type-Options    "nosniff" always;
         add_header Referrer-Policy           "no-referrer-when-downgrade" always;
-        add_header Content-Security-Policy   "default-src 'self' http: https: ws: wss: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
+        add_header Content-Security-Policy   "default-src 'self' http: https: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
         add_header Permissions-Policy        "interest-cohort=()" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
         add_header X-Frame-Options           "SAMEORIGIN";

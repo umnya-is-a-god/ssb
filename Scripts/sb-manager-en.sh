@@ -846,14 +846,14 @@ chain_end() {
     then
         warp_rule=$(echo "${config_temp}" | jq '.route.rules[] | select(.outbound=="warp")')
         warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-        echo "$(jq ".route.rules[${warpnum}] |= . + ${warp_rule}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${warpnum}] |= ${warp_rule}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     else
         echo -e "${red}Error: failed to download data from GitHub${clear}"
         echo ""
         main_menu
     fi
 
-    echo "$(jq 'del(.route.rules[] | select(.outbound=="proxy")) | del(.outbounds[] | select(.tag=="proxy"))' /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    echo "$(jq 'del(.route.rules[] | select(.outbound=="direct")) | del(.route.rules[] | select(.outbound=="proxy")) | del(.outbounds[] | select(.tag=="proxy"))' /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "false" ]]
     then
@@ -900,24 +900,28 @@ chain_middle() {
 
     nextoutbound=$(echo "${nextconfig}" | jq '.outbounds[] | select(.tag=="proxy")')
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
+    echo "$(jq ".route.rules[${warpnum}] |= {\"domain_suffix\":[\"example.com\"],\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ $(jq 'any(.outbounds[]; .tag == "proxy")' /etc/sing-box/config.json) == "false" ]]
     then
         proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
-        proxy_rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
+        rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
+        if [[ $(jq 'any(.route.rules[]; .outbound == "direct")' /etc/sing-box/config.json) == "false" ]]
+        then
+            echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+            rule_num=$(expr ${rule_num} + 1)
+        fi
     else
         proxy_num=$(jq '[.outbounds[].tag] | index("proxy")' /etc/sing-box/config.json)
-        proxy_rule_num=$(jq '[.route.rules[].outbound] | index("proxy")' /etc/sing-box/config.json)
+        rule_num=$(jq '[.route.rules[].outbound] | index("proxy")' /etc/sing-box/config.json)
     fi
 
     if [ -f /etc/haproxy/auth.lua ]
     then
-        echo "$(jq ".route.rules[${proxy_rule_num}] |= . + {\"inbound\":[\"trojan-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"inbound\":[\"trojan-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     else
-        echo "$(jq ".route.rules[${proxy_rule_num}] |= . + {\"inbound\":[\"trojan-in\",\"vless-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"inbound\":[\"trojan-in\",\"vless-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
-
-    echo "$(jq ".route.rules[${warpnum}] |= . + {\"rule_set\":[\"geoip-ru\",\"gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "true" ]]
     then
@@ -1405,7 +1409,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.3"
+    export version="1.2.4"
     export language="2"
     export -f get_ip
     export -f templates
