@@ -1409,7 +1409,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.4"
+    export version="1.2.5"
     export language="2"
     export -f get_ip
     export -f templates
