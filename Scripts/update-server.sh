@@ -16,7 +16,7 @@ check_parent() {
 }
 
 check_update() {
-    new_version="1.2.3"
+    new_version="1.2.4"
 
     if [[ "${version}" == "${new_version}" ]]
     then
@@ -74,7 +74,7 @@ insert_values() {
 
     echo "$(jq ".inbounds[${inboundnumbertr}].transport.path = \"/${trojanpath}\" | .inbounds[${inboundnumbervl}].transport.path = \"/${vlesspath}\"" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-    echo "$(jq ".route.rules[${warpnum}].domain_suffix = [] | .route.rules[${warpnum}].domain_suffix |= . + ${warp_domain_suffix}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    echo "$(jq ".route.rules[${warpnum}].domain_suffix |= ${warp_domain_suffix}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ "${transport}" == "httpupgrade" ]]
     then
@@ -95,18 +95,23 @@ insert_values() {
 }
 
 insert_chain() {
+    warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
+    echo "$(jq ".route.rules[${warpnum}] |= {\"domain_suffix\":${warp_domain_suffix},\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
-    proxy_rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
+    rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
+
+    if [[ $(jq 'any(.route.rules[]; .outbound == "direct")' /etc/sing-box/config.json) == "false" ]]
+    then
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        rule_num=$(expr ${rule_num} + 1)
+    fi
 
     if [ -f /etc/haproxy/auth.lua ]
     then
-        echo "$(jq ".route.rules[${proxy_rule_num}] |= . + {\"inbound\":[\"trojan-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"inbound\":[\"trojan-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     else
-        echo "$(jq ".route.rules[${proxy_rule_num}] |= . + {\"inbound\":[\"trojan-in\",\"vless-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"inbound\":[\"trojan-in\",\"vless-in\"],\"outbound\":\"proxy\"} | .outbounds[${proxy_num}] |= . + ${nextoutbound}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
-
-    warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-    echo "$(jq ".route.rules[${warpnum}] |= . + {\"rule_set\":[\"geoip-ru\",\"gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "true" ]]
     then
@@ -205,7 +210,7 @@ check_sync_client() {
     else
         echo -e "${textcolor_light}Syncing settings in client configs with GitHub...${clear}"
     fi
-    
+
     check_users
     validate_template
 

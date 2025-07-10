@@ -77,15 +77,15 @@
       "tag": "direct"
     },
     {
-      "type": "direct",
-      "tag": "IPv4",
-      "domain_strategy": "ipv4_only"
-    },
-    {
       "type": "socks",
       "tag": "warp",
       "server": "127.0.0.1",
       "server_port": 40000
+    },
+    {
+      "type": "direct",
+      "tag": "IPv4",
+      "domain_strategy": "ipv4_only"
     }
   ],
   "route": {

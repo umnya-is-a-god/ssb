@@ -37,7 +37,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 9) An option to setup connection to custom Cloudflare IP on the client
 10) Client Sing-Box configs with routing rules for Russia
 11) Automated management of user config files
-12) Page for convenient distribution of subscriptions
+12) Page for convenient distribution of subscriptions ([example](https://a-zuro.github.io/Secret-Sing-Box/Subscription-Page/sub-en.html))
  
 ### Server setup:
 
