@@ -672,7 +672,7 @@ cf_ip_settings() {
     echo -e "${red}ATTENTION!${clear}"
     echo "This option is recommended in case of unavailability of the IP that Cloudflare allocated to your domain for proxying"
     echo "You need to scan Cloudflare IP ranges from your device and choose the optimal IP by yourself"
-    echo "Instruction: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/cf-scan-ip-en.md"
+    echo "Instruction: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-scan-ip-en.md"
     echo ""
 
     while [[ $username != "x" ]] && [[ $username != "х" ]]
@@ -1409,7 +1409,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.5"
+    export version="1.2.6"
     export language="2"
     export -f get_ip
     export -f templates
