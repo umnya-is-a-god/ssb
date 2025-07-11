@@ -18,7 +18,7 @@ This script is designed to fully and quickly configure a secure proxy server wit
 Both setup methods make it impossible to detect Sing-Box from the outside, which improves security.
 
 > [!IMPORTANT]
-> Recommended OS for the server: Debian 11/12 or Ubuntu 22.04/24.04. Just 512 MB of RAM, 5 GB of disk space and 1 processor core are sufficient. You will also need an IPv4 on the server and your own domain ([How to set it up?](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/cf-settings-en.md)). Run as root on a newly installed system. It's recommended to update and reboot the system before running this script.
+> Recommended OS for the server: Debian 11/12 or Ubuntu 22.04/24.04. Just 512 MB of RAM, 5 GB of disk space and 1 processor core are sufficient. You will also need an IPv4 on the server and your own domain ([How to set it up?](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-settings-en.md)). Run as root on a newly installed system. It's recommended to update and reboot the system before running this script.
 
 > [!NOTE]
 > With routing rules for Russia. Open ports on the server: 443 and SSH.
@@ -86,9 +86,9 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 > [!IMPORTANT]
 > On some devices, "stack": "system" in tun interface settings in client configs might not work. In such cases, it is recommended to replace it with "gvisor" by using option 4 in the settings menu (see above).
 
-[Android and iOS](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS, but it has similar settings.
+[Android and iOS](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS, but it has similar settings.
 
-[Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/Sing-Box-Windows-en.md). This method is recommended due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app. If some apps are not proxied when using Hiddify, change the config options > service mode > VPN.
+[Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Windows-en.md). This method is recommended due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app. If some apps are not proxied when using Hiddify, change the config options > service mode > VPN.
 
 [Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions or use [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app.
 ```
