@@ -106,6 +106,7 @@ enter_language() {
 start_message_ru() {
     echo -e "${red}ВНИМАНИЕ!${clear}"
     echo "Запускайте скрипт на чистой системе"
+    echo ""
     echo "Перед запуском скрипта рекомендуется выполнить следующие действия:"
     echo -e "1) Обновить систему командой ${textcolor}apt update -y && apt full-upgrade -y${clear}"
     echo -e "2) Перезагрузить сервер командой ${textcolor}reboot${clear}"
@@ -119,13 +120,14 @@ start_message_ru() {
 start_message_en() {
     echo -e "${red}ATTENTION!${clear}"
     echo "Run the script on a newly installed system"
+    echo ""
     echo "Before running the script, it's recommended to do the following:"
     echo -e "1) Update the system (${textcolor}apt update -y && apt full-upgrade -y${clear})"
     echo -e "2) Reboot the server (${textcolor}reboot${clear})"
-    echo -e "3) If you have your own website then send the folder with its contents to the ${textcolor}/root${clear} directory of the server"
+    echo -e "3) If you have your own website, then send the folder with its contents to the ${textcolor}/root${clear} directory of the server"
     echo ""
-    echo -e "If it's done then press ${textcolor}Enter${clear} to continue"
-    echo -e "If not then press ${textcolor}Ctrl + C${clear} to exit the script"
+    echo -e "If it's done, then press ${textcolor}Enter${clear} to continue"
+    echo -e "If not, then press ${textcolor}Ctrl + C${clear} to exit the script"
     read BigRedButton
 }
 
