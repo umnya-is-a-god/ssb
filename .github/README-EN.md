@@ -90,7 +90,7 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 
 [Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/Sing-Box-Windows-en.md). This method is recommended due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app. If some apps are not proxied when using Hiddify, change the config options > service mode > VPN.
 
-[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/Docs/README-EN.md#client-setup). Run the command below and follow the instructions or use [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app.
+[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions or use [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app.
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux-en.sh)
 ```
