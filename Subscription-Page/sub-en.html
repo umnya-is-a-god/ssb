@@ -67,6 +67,10 @@
                 position: absolute;
                 z-index: -1;
             }
+
+            .linebreak {
+                display: none;
+            }
         }
 
         h3 {
@@ -143,7 +147,8 @@
         <p>
         <form onsubmit="return false;">
             <input type="text" placeholder="Enter your username..." id="nameInput" required><br><br>
-            <button class="button" onclick="openTrojanUrl()">  Open Trojan URL  </button>
+            <button class="button" onclick="openTrojanUrl()"> Open Trojan URL </button>
+            <br class="linebreak">
             <button class="button" onclick="openVlessUrl()">Open VLESS URL</button>
         </form>
         </p>
