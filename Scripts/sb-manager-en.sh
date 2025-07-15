@@ -96,13 +96,8 @@ get_data() {
 
     templates
 
-    tempip=$(jq -r '.dns.servers[] | select(has("client_subnet")) | .client_subnet' /var/www/${subspath}/template.json)
+    tempip=$(jq -r '.route.rules[] | select(has("ip_cidr")) | .ip_cidr[0]' /var/www/${subspath}/template.json)
     tempdomain=$(jq -r '.outbounds[] | select(.tag=="proxy") | .server' /var/www/${subspath}/template.json)
-
-    if [ -z ${tempip} ]
-    then
-        tempip=$(jq -r '.route.rules[] | select(has("ip_cidr")) | .ip_cidr[0]' /var/www/${subspath}/template.json)
-    fi
 
     temprulesetpath=$(jq -r ".route.rule_set[-1].url" /var/www/${subspath}/template.json)
     temprulesetpath=${temprulesetpath#*"https://${tempdomain}/"}
@@ -449,13 +444,8 @@ sync_local_message() {
 }
 
 sync_client_configs_local() {
-    loctempip=$(jq -r '.dns.servers[] | select(has("client_subnet")) | .client_subnet' /var/www/${subspath}/template-loc.json)
+    loctempip=$(jq -r '.route.rules[] | select(has("ip_cidr")) | .ip_cidr[0]' /var/www/${subspath}/template-loc.json)
     loctempdomain=$(jq -r '.outbounds[] | select(.tag=="proxy") | .server' /var/www/${subspath}/template-loc.json)
-
-    if [ -z ${loctempip} ]
-    then
-        loctempip=$(jq -r '.route.rules[] | select(has("ip_cidr")) | .ip_cidr[0]' /var/www/${subspath}/template-loc.json)
-    fi
 
     loctemprulesetpath=$(jq -r ".route.rule_set[-1].url" /var/www/${subspath}/template-loc.json)
     loctemprulesetpath=${loctemprulesetpath#*"https://${loctempdomain}/"}
@@ -1409,7 +1399,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.6"
+    export version="1.2.7"
     export language="2"
     export -f get_ip
     export -f templates

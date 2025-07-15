@@ -8,7 +8,6 @@
       {
         "tag": "dns-remote",
         "address": "tls://1.1.1.1",
-        "client_subnet": "SERVER-IP",
         "detour": "proxy"
       },
       {

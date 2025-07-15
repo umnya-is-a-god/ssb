@@ -1336,8 +1336,8 @@ cat > /etc/sing-box/config.json <<EOF
   "dns": {
     "servers": [
       {
-        "tag": "dns-remote",
-        "address": "tls://1.1.1.1"
+        "tag": "dns-main",
+        "address": "local"
       },
       {
         "tag": "dns-block",
@@ -1354,7 +1354,7 @@ cat > /etc/sing-box/config.json <<EOF
       },
       {
         "outbound": "any",
-        "server": "dns-remote"
+        "server": "dns-main"
       }
     ]
   },
@@ -1552,7 +1552,6 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
       {
         "tag": "dns-remote",
         "address": "tls://1.1.1.1",
-        "client_subnet": "${serverip}",
         "detour": "proxy"
       },
       {
@@ -2365,8 +2364,7 @@ http {
         add_header Referrer-Policy           "no-referrer-when-downgrade" always;
         add_header Content-Security-Policy   "default-src 'self' http: https: ws: wss: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
         add_header Permissions-Policy        "interest-cohort=()" always;
-        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-        add_header X-Frame-Options           "SAMEORIGIN";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         proxy_hide_header X-Powered-By;
 
         # . files
@@ -2515,10 +2513,9 @@ http {
         add_header X-XSS-Protection          "1; mode=block" always;
         add_header X-Content-Type-Options    "nosniff" always;
         add_header Referrer-Policy           "no-referrer-when-downgrade" always;
-        add_header Content-Security-Policy   "default-src 'self' http: https: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
+        add_header Content-Security-Policy   "default-src 'self' http: https: ws: wss: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
         add_header Permissions-Policy        "interest-cohort=()" always;
-        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-        add_header X-Frame-Options           "SAMEORIGIN";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         proxy_hide_header X-Powered-By;
 
         # . files
