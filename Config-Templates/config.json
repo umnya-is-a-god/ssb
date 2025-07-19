@@ -107,10 +107,11 @@
       {
         "rule_set": [
           "geoip-ru",
-          "gov-ru",
-          "openai",
+          "category-gov-ru",
           "google-deepmind",
-          "telegram"
+          "openai",
+          "anthropic",
+          "xai"
         ],
         "domain_suffix": [
           ".ru",
@@ -143,7 +144,7 @@
         "path": "/var/www/RULESETPATH/geoip-ru.srs"
       },
       {
-        "tag": "gov-ru",
+        "tag": "category-gov-ru",
         "type": "local",
         "format": "binary",
         "path": "/var/www/RULESETPATH/geosite-category-gov-ru.srs"
@@ -153,12 +154,6 @@
         "type": "local",
         "format": "binary",
         "path": "/var/www/RULESETPATH/geosite-category-ads-all.srs"
-      },
-      {
-        "tag": "telegram",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/RULESETPATH/geosite-telegram.srs"
       },
       {
         "tag": "google",
@@ -177,6 +172,18 @@
         "type": "local",
         "format": "binary",
         "path": "/var/www/RULESETPATH/geosite-openai.srs"
+      },
+      {
+        "tag": "anthropic",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/RULESETPATH/geosite-anthropic.srs"
+      },
+      {
+        "tag": "xai",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/RULESETPATH/geosite-xai.srs"
       }
     ]
   },

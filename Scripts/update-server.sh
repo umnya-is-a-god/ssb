@@ -16,7 +16,7 @@ check_parent() {
 }
 
 check_update() {
-    new_version="1.2.7"
+    new_version="1.2.8"
 
     if [[ "${version}" == "${new_version}" ]]
     then
@@ -102,7 +102,7 @@ insert_chain() {
 
     if [[ $(jq 'any(.route.rules[]; .outbound == "direct")' /etc/sing-box/config.json) == "false" ]]
     then
-        echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"category-gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
         rule_num=$(expr ${rule_num} + 1)
     fi
 
@@ -123,7 +123,7 @@ insert_chain() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(telegram google google-deepmind openai)
+    rule_sets=(google google-deepmind openai anthropic xai)
 
     for ruleset_tag in "${rule_sets[@]}"
     do
