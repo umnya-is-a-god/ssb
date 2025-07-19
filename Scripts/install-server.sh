@@ -1436,10 +1436,11 @@ cat > /etc/sing-box/config.json <<EOF
       {
         "rule_set": [
           "geoip-ru",
-          "gov-ru",
-          "openai",
+          "category-gov-ru",
           "google-deepmind",
-          "telegram"
+          "openai",
+          "anthropic",
+          "xai"
         ],
         "domain_suffix": [
           ".ru",
@@ -1472,7 +1473,7 @@ cat > /etc/sing-box/config.json <<EOF
         "path": "/var/www/${rulesetpath}/geoip-ru.srs"
       },
       {
-        "tag": "gov-ru",
+        "tag": "category-gov-ru",
         "type": "local",
         "format": "binary",
         "path": "/var/www/${rulesetpath}/geosite-category-gov-ru.srs"
@@ -1482,12 +1483,6 @@ cat > /etc/sing-box/config.json <<EOF
         "type": "local",
         "format": "binary",
         "path": "/var/www/${rulesetpath}/geosite-category-ads-all.srs"
-      },
-      {
-        "tag": "telegram",
-        "type": "local",
-        "format": "binary",
-        "path": "/var/www/${rulesetpath}/geosite-telegram.srs"
       },
       {
         "tag": "google",
@@ -1506,6 +1501,18 @@ cat > /etc/sing-box/config.json <<EOF
         "type": "local",
         "format": "binary",
         "path": "/var/www/${rulesetpath}/geosite-openai.srs"
+      },
+      {
+        "tag": "anthropic",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/${rulesetpath}/geosite-anthropic.srs"
+      },
+      {
+        "tag": "xai",
+        "type": "local",
+        "format": "binary",
+        "path": "/var/www/${rulesetpath}/geosite-xai.srs"
       }
     ]
   },
@@ -1645,7 +1652,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "aliexpress"
         ],
         "rule_set": [
-          "gov-ru",
+          "category-gov-ru",
           "yandex",
           "vk",
           "mailru",
@@ -1834,7 +1841,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
           "${serverip}"
         ],
         "rule_set": [
-          "gov-ru",
+          "category-gov-ru",
           "yandex",
           "vk",
           "mailru",
@@ -1908,7 +1915,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
         "url": "https://${domain}/${rulesetpath}/geoip-ru.srs"
       },
       {
-        "tag": "gov-ru",
+        "tag": "category-gov-ru",
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-category-gov-ru.srs"

@@ -101,7 +101,7 @@
           "aliexpress"
         ],
         "rule_set": [
-          "gov-ru",
+          "category-gov-ru",
           "yandex",
           "vk",
           "mailru",
@@ -290,7 +290,7 @@
           "SERVER-IP"
         ],
         "rule_set": [
-          "gov-ru",
+          "category-gov-ru",
           "yandex",
           "vk",
           "mailru",
@@ -364,7 +364,7 @@
         "url": "https://DOMAIN/RULESETPATH/geoip-ru.srs"
       },
       {
-        "tag": "gov-ru",
+        "tag": "category-gov-ru",
         "type": "remote",
         "format": "binary",
         "url": "https://DOMAIN/RULESETPATH/geosite-category-gov-ru.srs"
