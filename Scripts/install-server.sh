@@ -1,7 +1,7 @@
 #!/bin/bash
 
-textcolor='\033[1;34m'
-textcolor_light='\033[1;36m'
+textcolor='\033[1;36m'
+textcolor_light='\033[1;37m'
 red='\033[1;31m'
 clear='\033[0m'
 
