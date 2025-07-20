@@ -168,7 +168,7 @@ add_proxies() {
 		touch /usr/local/bin/${newcomm}
 		cat > /usr/local/bin/${newcomm} <<-EOF
 		#!/bin/bash
-		textcolor='\033[1;34m'
+		textcolor='\033[1;36m'
 		red='\033[1;31m'
 		clear='\033[0m'
 		if [[ \$EUID -ne 0 ]]
