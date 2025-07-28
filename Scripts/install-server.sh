@@ -354,7 +354,7 @@ check_cf_token_ru() {
     echo "Проверка домена, API токена/ключа и почты..."
     get_test_response
 
-    while [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
+    while [[ "$domain" =~ ".." ]] || [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
     do
         echo ""
         echo -e "${red}Ошибка: неправильно введён домен, API токен/ключ или почта${clear}"
@@ -371,7 +371,7 @@ check_cf_token_en() {
     echo "Checking domain name, API token/key and email..."
     get_test_response
 
-    while [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
+    while [[ "$domain" =~ ".." ]] || [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
     do
         echo ""
         echo -e "${red}Error: invalid domain name, API token/key or email${clear}"
@@ -1434,14 +1434,6 @@ cat > /etc/sing-box/config.json <<EOF
         "method": "drop"
       },
       {
-        "rule_set": [
-          "geoip-ru",
-          "category-gov-ru",
-          "google-deepmind",
-          "openai",
-          "anthropic",
-          "xai"
-        ],
         "domain_suffix": [
           ".ru",
           ".su",
@@ -1455,6 +1447,14 @@ cat > /etc/sing-box/config.json <<EOF
         ],
         "domain_keyword": [
           "xn--"
+        ],
+        "rule_set": [
+          "geoip-ru",
+          "category-gov-ru",
+          "google-deepmind",
+          "openai",
+          "anthropic",
+          "xai"
         ],
         "outbound": "warp"
       },
@@ -2381,8 +2381,6 @@ http {
 
         # Main location
         ${comment3}location / {
-            ${comment2}${comment3}root /var/www/html;
-            ${comment2}${comment3}index index.html index.htm;
             ${comment2}${comment3}auth_basic "Restricted Content";
             ${comment2}${comment3}auth_basic_user_file /etc/nginx/.htpasswd;
             ${comment1}${comment3}return 301 https://${redirect}\$request_uri;
@@ -2652,7 +2650,7 @@ frontend haproxy-tls
 
         # Backend rules
         use_backend reject if !{ ssl_fc_sni -i ${domain} } !{ ssl_fc_sni -m end .${domain} }
-        ${comment3}use_backend http-sub if { path /${subspath} } || { path_beg /${subspath}/ } || { path /${rulesetpath} } || { path_beg /${rulesetpath}/ }
+        ${comment3}use_backend http-sub if { path_beg /${subspath}/ } || { path_beg /${rulesetpath}/ }
         use_backend %[lua.trojan_auth]
         default_backend http
 
@@ -2665,7 +2663,7 @@ backend http
         mode http
         timeout server 1h
         ${comment2}${comment3}http-request auth unless { http_auth(mycredentials) }
-        ${comment1}${comment3}http-request redirect code 301 location https://${redirect}/
+        ${comment1}${comment3}http-request redirect code 301 location https://${redirect}%[capture.req.uri]
         ${comment1}${comment2}server nginx 127.0.0.1:11443
 
 ${comment3}backend http-sub
@@ -2781,7 +2779,7 @@ final_message_ru() {
     if [ ! -f /etc/letsencrypt/live/${domain}/fullchain.pem ]
     then
         echo ""
-        echo -e "${red}Ошибка: сертификат не выпущен, введите команду \"ssb\" и выберите пункт 11${clear}"
+        echo -e "${red}Ошибка: сертификат не выпущен, введите команду \"ssb\" и выберите пункт 11 или 12${clear}"
     fi
 }
 
@@ -2834,7 +2832,7 @@ final_message_en() {
     if [ ! -f /etc/letsencrypt/live/${domain}/fullchain.pem ]
     then
         echo ""
-        echo -e "${red}Error: certificate has not been issued, enter \"ssb\" command and select option 11${clear}"
+        echo -e "${red}Error: certificate has not been issued, enter \"ssb\" command and select option 11 or 12${clear}"
     fi
 }
 

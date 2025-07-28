@@ -105,14 +105,6 @@
         "method": "drop"
       },
       {
-        "rule_set": [
-          "geoip-ru",
-          "category-gov-ru",
-          "google-deepmind",
-          "openai",
-          "anthropic",
-          "xai"
-        ],
         "domain_suffix": [
           ".ru",
           ".su",
@@ -126,6 +118,14 @@
         ],
         "domain_keyword": [
           "xn--"
+        ],
+        "rule_set": [
+          "geoip-ru",
+          "category-gov-ru",
+          "google-deepmind",
+          "openai",
+          "anthropic",
+          "xai"
         ],
         "outbound": "warp"
       },

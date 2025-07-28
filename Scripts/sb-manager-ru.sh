@@ -699,7 +699,17 @@ cf_ip_settings() {
     done
 }
 
+check_warp() {
+    if [[ $(jq 'any(.route.rules[]; .outbound == "warp")' /etc/sing-box/config.json) == "false" ]]
+    then
+        echo -e "${red}Ошибка: в /etc/sing-box/config.json не найдено правил маршрутизации для WARP${clear}"
+        echo ""
+        main_menu
+    fi
+}
+
 show_warp_domains() {
+    check_warp
     echo -e "${textcolor}Список доменов/суффиксов WARP:${clear}"
     jq -r '.route.rules[] | select(.outbound=="warp") | .domain_suffix[]' /etc/sing-box/config.json
     echo ""
@@ -770,6 +780,7 @@ check_warp_domain_del() {
 }
 
 add_warp_domains() {
+    check_warp
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
     while [[ $newwarp != "x" ]] && [[ $newwarp != "х" ]]
     do
@@ -787,6 +798,7 @@ add_warp_domains() {
 }
 
 delete_warp_domains() {
+    check_warp
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
     while [[ $delwarp != "x" ]] && [[ $delwarp != "х" ]]
     do
@@ -829,35 +841,16 @@ check_nextlink() {
     done
 }
 
-chain_end() {
-    config_temp=$(curl -s https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Config-Templates/config.json)
+manage_rule_sets() {
+    for ruleset_tag in "${rule_sets_del[@]}"
+    do
+        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "true" ]]
+        then
+            echo "$(jq </etc/sing-box/config.json "del(.route.rule_set[] | select(.tag==\"${ruleset_tag}\"))")" > /etc/sing-box/config.json
+        fi
+    done
 
-    if [ $(jq -e . >/dev/null 2>&1 <<< "${config_temp}"; echo $?) -eq 0 ] && [ -n "${config_temp}" ]
-    then
-        warp_rule=$(echo "${config_temp}" | jq '.route.rules[] | select(.outbound=="warp")')
-        warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-        echo "$(jq ".route.rules[${warpnum}] |= ${warp_rule}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-    else
-        echo -e "${red}Ошибка: не удалось загрузить данные с GitHub${clear}"
-        echo ""
-        main_menu
-    fi
-
-    echo "$(jq 'del(.route.rules[] | select(.outbound=="direct")) | del(.route.rules[] | select(.outbound=="proxy")) | del(.outbounds[] | select(.tag=="proxy"))' /etc/sing-box/config.json)" > /etc/sing-box/config.json
-
-    if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "false" ]]
-    then
-        echo "$(jq '.outbounds[.outbounds | length] |= . + {"type":"direct","tag":"IPv4","domain_strategy":"ipv4_only"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
-    fi
-
-    if [[ $(jq 'any(.route.rules[]; .outbound == "IPv4")' /etc/sing-box/config.json) == "false" ]]
-    then
-        echo "$(jq '.route.rules[.route.rules | length] |= . + {"rule_set":["google"],"outbound":"IPv4"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
-    fi
-
-    rule_sets=(google google-deepmind openai anthropic xai)
-
-    for ruleset_tag in "${rule_sets[@]}"
+    for ruleset_tag in "${rule_sets_add[@]}"
     do
         if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "false" ]]
         then
@@ -871,6 +864,41 @@ chain_end() {
     done
 
     chmod -R 755 /var/www/${rulesetpath}
+}
+
+chain_end() {
+    if [[ $(jq 'any(.route.rules[]; .outbound == "warp")' /etc/sing-box/config.json) == "true" ]]
+    then
+        config_temp=$(curl -s https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Config-Templates/config.json)
+
+        if [ $(jq -e . >/dev/null 2>&1 <<< "${config_temp}"; echo $?) -ne 0 ] || [ -z "${config_temp}" ]
+        then
+            echo -e "${red}Ошибка: не удалось загрузить данные с GitHub${clear}"
+            echo ""
+            main_menu
+        fi
+
+        warp_rule=$(echo "${config_temp}" | jq '.route.rules[] | select(.outbound=="warp")')
+        warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
+        echo "$(jq ".route.rules[${warpnum}] |= ${warp_rule}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    fi
+
+    echo "$(jq "del(.route.rules[] | select(.outbound==\"direct\")) | del(.route.rules[] | select(.outbound==\"proxy\")) | del(.outbounds[] | select(.tag==\"proxy\"))" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+
+    if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "false" ]]
+    then
+        echo "$(jq '.outbounds[.outbounds | length] |= . + {"type":"direct","tag":"IPv4","domain_strategy":"ipv4_only"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    fi
+
+    if [[ $(jq 'any(.route.rules[]; .outbound == "IPv4")' /etc/sing-box/config.json) == "false" ]]
+    then
+        echo "$(jq '.route.rules[.route.rules | length] |= . + {"rule_set":["google"],"outbound":"IPv4"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    fi
+
+    rule_sets_del=(telegram)
+    rule_sets_add=(google-deepmind openai anthropic xai)
+    manage_rule_sets
+
     systemctl reload sing-box.service
     echo "Изменение настроек завершено"
     echo ""
@@ -887,23 +915,26 @@ chain_middle() {
     done
     exit_enter_nextlink
     check_nextlink
-
     nextoutbound=$(echo "${nextconfig}" | jq '.outbounds[] | select(.tag=="proxy")')
-    warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-    echo "$(jq ".route.rules[${warpnum}] |= {\"domain_suffix\":[\"example.com\"],\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+
+    if [[ $(jq 'any(.route.rules[]; .outbound == "warp")' /etc/sing-box/config.json) == "true" ]]
+    then
+        warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
+        echo "$(jq ".route.rules[${warpnum}] |= {\"domain_suffix\":[\"example.com\"],\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    fi
 
     if [[ $(jq 'any(.outbounds[]; .tag == "proxy")' /etc/sing-box/config.json) == "false" ]]
     then
-        proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
-        rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
         if [[ $(jq 'any(.route.rules[]; .outbound == "direct")' /etc/sing-box/config.json) == "false" ]]
         then
-            echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"category-gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-            rule_num=$(expr ${rule_num} + 1)
+            proxy_rule=$(jq 'limit(1; .route.rules[] | select(.outbound=="proxy"))' /var/www/${subspath}/template.json)
+            echo "$(jq ".route.rules |= . + [ ${proxy_rule}, {\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"rule_set\":[\"geoip-ru\",\"category-gov-ru\"],\"outbound\":\"direct\"} ]" /etc/sing-box/config.json)" > /etc/sing-box/config.json
         fi
+        proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
+        rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
     else
         proxy_num=$(jq '[.outbounds[].tag] | index("proxy")' /etc/sing-box/config.json)
-        rule_num=$(jq '[.route.rules[].outbound] | index("proxy")' /etc/sing-box/config.json)
+        rule_num=$(expr $(jq '.route.rules | length' /etc/sing-box/config.json) - $(jq '[.route.rules[].outbound] | reverse | index("proxy")' /etc/sing-box/config.json) - 1)
     fi
 
     if [ -f /etc/haproxy/auth.lua ]
@@ -923,15 +954,9 @@ chain_middle() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google google-deepmind openai anthropic xai)
-
-    for ruleset_tag in "${rule_sets[@]}"
-    do
-        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "true" ]]
-        then
-            echo "$(jq </etc/sing-box/config.json "del(.route.rule_set[] | select(.tag==\"${ruleset_tag}\"))")" > /etc/sing-box/config.json
-        fi
-    done
+    rule_sets_del=(google-deepmind openai anthropic xai)
+    rule_sets_add=(telegram)
+    manage_rule_sets
 
     systemctl reload sing-box.service
     echo "Изменение настроек завершено"
@@ -1149,7 +1174,7 @@ check_cf_token() {
     echo "Проверка домена, API токена/ключа и почты..."
     get_test_response
 
-    while [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
+    while [[ "$domain" =~ ".." ]] || [[ -z $(echo $test_response | grep "\"${testdomain}\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:edit\"") ]] || [[ -z $(echo $test_response | grep "\"#dns_records:read\"") ]] || [[ -z $(echo $test_response | grep "\"#zone:read\"") ]]
     do
         echo ""
         echo -e "${red}Ошибка: неправильно введён домен, API токен/ключ или почта${clear}"
@@ -1399,7 +1424,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.8"
+    export version="1.2.9"
     export language="1"
     export -f get_ip
     export -f templates
