@@ -16,7 +16,7 @@ check_parent() {
 }
 
 check_update() {
-    new_version="1.2.8"
+    new_version="1.2.9"
 
     if [[ "${version}" == "${new_version}" ]]
     then
@@ -94,17 +94,41 @@ insert_values() {
     sed -i -e "s/$temprulesetpath/$rulesetpath/g" /etc/sing-box/config.json
 }
 
+manage_rule_sets() {
+    for ruleset_tag in "${rule_sets_del[@]}"
+    do
+        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "true" ]]
+        then
+            echo "$(jq </etc/sing-box/config.json "del(.route.rule_set[] | select(.tag==\"${ruleset_tag}\"))")" > /etc/sing-box/config.json
+        fi
+    done
+
+    for ruleset_tag in "${rule_sets_add[@]}"
+    do
+        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "false" ]]
+        then
+            echo "$(jq ".route.rule_set[.route.rule_set | length] |= . + {\"tag\":\"${ruleset_tag}\",\"type\":\"local\",\"format\":\"binary\",\"path\":\"/var/www/${rulesetpath}/geosite-${ruleset_tag}.srs\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        fi
+
+        if [ ! -f /var/www/${rulesetpath}/geosite-${ruleset_tag}.srs ]
+        then
+            wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/geosite-${ruleset_tag}.srs
+        fi
+    done
+}
+
 insert_chain() {
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
     echo "$(jq ".route.rules[${warpnum}] |= {\"domain_suffix\":${warp_domain_suffix},\"outbound\":\"warp\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-    proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
-    rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
 
     if [[ $(jq 'any(.route.rules[]; .outbound == "direct")' /etc/sing-box/config.json) == "false" ]]
     then
-        echo "$(jq ".route.rules[${rule_num}] |= . + {\"rule_set\":[\"geoip-ru\",\"category-gov-ru\"],\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"outbound\":\"direct\"}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-        rule_num=$(expr ${rule_num} + 1)
+        proxy_rule=$(jq 'limit(1; .route.rules[] | select(.outbound=="proxy"))' /var/www/${subspath}/template.json)
+        echo "$(jq ".route.rules |= . + [ ${proxy_rule}, {\"domain_suffix\":[\".ru\",\".su\",\".ru.com\",\".ru.net\"],\"domain_keyword\":[\"xn--\"],\"rule_set\":[\"geoip-ru\",\"category-gov-ru\"],\"outbound\":\"direct\"} ]" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
+
+    proxy_num=$(jq '.outbounds | length' /etc/sing-box/config.json)
+    rule_num=$(jq '.route.rules | length' /etc/sing-box/config.json)
 
     if [ -f /etc/haproxy/auth.lua ]
     then
@@ -123,15 +147,9 @@ insert_chain() {
         echo "$(jq </etc/sing-box/config.json 'del(.route.rules[] | select(.outbound=="IPv4"))')" > /etc/sing-box/config.json
     fi
 
-    rule_sets=(google google-deepmind openai anthropic xai)
-
-    for ruleset_tag in "${rule_sets[@]}"
-    do
-        if [[ $(jq "any(.route.rule_set[]; .tag == \"${ruleset_tag}\")" /etc/sing-box/config.json) == "true" ]]
-        then
-            echo "$(jq </etc/sing-box/config.json "del(.route.rule_set[] | select(.tag==\"${ruleset_tag}\"))")" > /etc/sing-box/config.json
-        fi
-    done
+    rule_sets_del=(google-deepmind openai anthropic xai)
+    rule_sets_add=(telegram)
+    manage_rule_sets
 }
 
 update_services() {
