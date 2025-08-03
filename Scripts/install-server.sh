@@ -1214,7 +1214,7 @@ cert_standalone() {
 
     ufw delete allow 80 &> /dev/null
     { crontab -l; echo "0 2 1 */2 * ufw allow 80 && certbot -q renew --force-renewal"; } | crontab -
-    ufw_close_80=" && ufw delete allow 80"
+    ufw_close_80="; ufw delete allow 80"
 }
 
 certificates() {
