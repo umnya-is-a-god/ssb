@@ -1053,7 +1053,7 @@ reissue_cert() {
         certbot certonly --standalone --preferred-challenges http --agree-tos --email ${email} -d ${domain} --no-eff-email --non-interactive
         cert_final_text
         ufw delete allow 80 &> /dev/null
-        ufw_close_80=" && ufw delete allow 80"
+        ufw_close_80="; ufw delete allow 80"
     fi
 
     if [ ! -f /etc/haproxy/auth.lua ] && [ -f /etc/letsencrypt/renewal/${domain}.conf ]
@@ -1236,7 +1236,7 @@ issue_cert_standalone() {
     fi
 
     ufw delete allow 80 &> /dev/null
-    ufw_close_80=" && ufw delete allow 80"
+    ufw_close_80="; ufw delete allow 80"
 
     if [[ -z $(crontab -l | grep "ufw allow 80") ]]
     then
