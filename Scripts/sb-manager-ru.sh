@@ -88,7 +88,7 @@ get_data() {
 
     subspath=$(grep "location ~ ^/" /etc/nginx/nginx.conf | head -n 1)
     subspath=${subspath#*"location ~ ^/"}
-    subspath=${subspath%" {"*}
+    subspath=${subspath%%[ /]*}
 
     rulesetpath=$(grep "alias /var/www/" /etc/nginx/nginx.conf | head -n 1)
     rulesetpath=${rulesetpath#*"alias /var/www/"}
@@ -1297,20 +1297,13 @@ change_domain() {
     then
         echo "renew_hook = systemctl reload nginx${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
         sed -i -e "s/$old_domain/$domain/g" /etc/nginx/nginx.conf
-        systemctl reload nginx.service
-        if [ $? -ne 0 ]
-        then
-            systemctl start nginx.service
-        fi
+        systemctl reload nginx.service || systemctl start nginx.service
     else
         echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
         cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem
+        rm /etc/haproxy/certs/${old_domain}.pem
         sed -i -e "s/$old_domain/$domain/g" /etc/haproxy/haproxy.cfg
-        systemctl reload haproxy.service
-        if [ $? -ne 0 ]
-        then
-            systemctl start haproxy.service
-        fi
+        systemctl reload haproxy.service || systemctl start haproxy.service
     fi
 
     for file in /var/www/${subspath}/*-CLIENT.json
@@ -1424,7 +1417,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.9"
+    export version="1.2.10"
     export language="1"
     export -f get_ip
     export -f templates

@@ -84,13 +84,15 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 
 ### Client setup:
 > [!IMPORTANT]
+> It is recommended to use Sing-Box app due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) app or use any client app based on Sing-Box or Clash/Mihomo cores. If some apps are not proxied when using Hiddify, change the config options > service mode > VPN.
+>
 > On some devices, "stack": "system" in tun interface settings in client configs might not work. In such cases, it is recommended to replace it with "gvisor" by using option 4 in the settings menu (see above).
 
 [Android and iOS](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS, but it has similar settings.
 
-[Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Windows-en.md). This method is recommended due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app. If some apps are not proxied when using Hiddify, change the config options > service mode > VPN.
+[Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Windows-en.md). This method includes setting up a pure Sing-Box core and does not have a GUI.
 
-[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions or use [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) client app.
+[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions.
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux-en.sh)
 ```

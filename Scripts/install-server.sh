@@ -2387,7 +2387,7 @@ http {
         ${comment3}}
 
         # Subsciption
-        location ~ ^/${subspath} {
+        location ~ ^/${subspath}/ {
             default_type application/json;
             root /var/www;
         }
@@ -2529,7 +2529,7 @@ http {
         }
 
         # Subsciption
-        location ~ ^/${subspath} {
+        location ~ ^/${subspath}/ {
             default_type application/json;
             root /var/www;
         }
