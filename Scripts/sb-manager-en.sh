@@ -887,7 +887,7 @@ chain_end() {
 
     if [[ $(jq 'any(.outbounds[]; .tag == "IPv4")' /etc/sing-box/config.json) == "false" ]]
     then
-        echo "$(jq '.outbounds[.outbounds | length] |= . + {"type":"direct","tag":"IPv4","domain_strategy":"ipv4_only"}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq '.outbounds[.outbounds | length] |= . + {"type":"direct","tag":"IPv4","domain_resolver":{"server":"dns-main","strategy":"ipv4_only"}}' /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
 
     if [[ $(jq 'any(.route.rules[]; .outbound == "IPv4")' /etc/sing-box/config.json) == "false" ]]
@@ -1417,7 +1417,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.2.10"
+    export version="1.3.0"
     export language="2"
     export -f get_ip
     export -f templates

@@ -1336,12 +1336,8 @@ cat > /etc/sing-box/config.json <<EOF
   "dns": {
     "servers": [
       {
-        "tag": "dns-main",
-        "address": "local"
-      },
-      {
-        "tag": "dns-block",
-        "address": "rcode://success"
+        "type": "local",
+        "tag": "dns-main"
       }
     ],
     "rules": [
@@ -1349,14 +1345,11 @@ cat > /etc/sing-box/config.json <<EOF
         "rule_set": [
           "category-ads-all"
         ],
-        "server": "dns-block",
-        "disable_cache": true
-      },
-      {
-        "outbound": "any",
-        "server": "dns-main"
+        "action": "predefined",
+        "rcode": "NOERROR"
       }
-    ]
+    ],
+    "final": "dns-main"
   },
   "inbounds": [
     {
@@ -1414,7 +1407,10 @@ cat > /etc/sing-box/config.json <<EOF
     {
       "type": "direct",
       "tag": "IPv4",
-      "domain_strategy": "ipv4_only"
+      "domain_resolver": {
+        "server": "dns-main",
+        "strategy": "ipv4_only"
+      }
     }
   ],
   "route": {
@@ -1563,8 +1559,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
       },
       {
         "tag": "dns-local",
-        "address": "195.208.4.1",
-        "detour": "direct"
+        "address": "195.208.4.1"
       },
       {
         "tag": "dns-block",
@@ -2173,8 +2168,7 @@ cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
         "url": "https://${domain}/${rulesetpath}/geosite-category-ads-all.srs"
       }
     ],
-    "auto_detect_interface": true,
-    "override_android_vpn": true
+    "auto_detect_interface": true
   },
   "experimental": {
     "cache_file": {

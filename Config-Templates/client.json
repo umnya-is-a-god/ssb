@@ -12,8 +12,7 @@
       },
       {
         "tag": "dns-local",
-        "address": "195.208.4.1",
-        "detour": "direct"
+        "address": "195.208.4.1"
       },
       {
         "tag": "dns-block",
@@ -622,8 +621,7 @@
         "url": "https://DOMAIN/RULESETPATH/geosite-category-ads-all.srs"
       }
     ],
-    "auto_detect_interface": true,
-    "override_android_vpn": true
+    "auto_detect_interface": true
   },
   "experimental": {
     "cache_file": {
