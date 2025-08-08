@@ -1141,7 +1141,7 @@ setup_ufw() {
     echo -e "${textcolor_light}Setting up UFW...${clear}"
     ufw allow ${sshp}/tcp
     ufw allow 443/tcp
-    # Protection from Reality certificate stealing:
+    # Protection from incoming Reality requests:
     ufw insert 1 deny from ${serverip}/22 &> /dev/null
     echo ""
     yes | ufw enable
@@ -1193,8 +1193,7 @@ cert_dns_cf() {
         certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.credentials --dns-cloudflare-propagation-seconds 35 -d ${domain},*.${domain} --agree-tos -m ${email} --no-eff-email --non-interactive
     fi
 
-    { crontab -l; echo "0 2 1 */2 * certbot -q renew --force-renewal"; } | crontab -
-    ufw_close_80=""
+    { crontab -l; echo "0 2 * * * certbot -q renew"; } | crontab -
 }
 
 cert_standalone() {
@@ -1213,8 +1212,7 @@ cert_standalone() {
     fi
 
     ufw delete allow 80 &> /dev/null
-    { crontab -l; echo "0 2 1 */2 * ufw allow 80 && certbot -q renew --force-renewal"; } | crontab -
-    ufw_close_80="; ufw delete allow 80"
+    { crontab -l; echo "0 2 * * * ufw allow 80 && certbot -q renew; ufw delete allow 80"; } | crontab -
 }
 
 certificates() {
@@ -1229,11 +1227,11 @@ certificates() {
 
     if [[ "${variant}" == "1" ]]
     then
-        echo "renew_hook = systemctl reload nginx${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = systemctl reload nginx" >> /etc/letsencrypt/renewal/${domain}.conf
         echo ""
         openssl dhparam -out /etc/nginx/dhparam.pem 2048
     else
-        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy" >> /etc/letsencrypt/renewal/${domain}.conf
         echo ""
         openssl dhparam -out /etc/haproxy/dhparam.pem 2048
     fi
