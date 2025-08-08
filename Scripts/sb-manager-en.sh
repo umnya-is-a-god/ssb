@@ -1047,22 +1047,20 @@ reissue_cert() {
     then
         certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.credentials --dns-cloudflare-propagation-seconds 35 -d ${domain},*.${domain} --agree-tos -m ${email} --no-eff-email --non-interactive
         cert_final_text
-        ufw_close_80=""
     else
         ufw allow 80 &> /dev/null
         certbot certonly --standalone --preferred-challenges http --agree-tos --email ${email} -d ${domain} --no-eff-email --non-interactive
         cert_final_text
         ufw delete allow 80 &> /dev/null
-        ufw_close_80="; ufw delete allow 80"
     fi
 
     if [ ! -f /etc/haproxy/auth.lua ] && [ -f /etc/letsencrypt/renewal/${domain}.conf ]
     then
-        echo "renew_hook = systemctl reload nginx${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = systemctl reload nginx" >> /etc/letsencrypt/renewal/${domain}.conf
         systemctl start nginx.service
     elif [ -f /etc/haproxy/auth.lua ] && [ -f /etc/letsencrypt/renewal/${domain}.conf ]
     then
-        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy" >> /etc/letsencrypt/renewal/${domain}.conf
         cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem
         systemctl start haproxy.service
     fi
@@ -1213,8 +1211,7 @@ issue_cert_dns_cf() {
         certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.credentials --dns-cloudflare-propagation-seconds 35 -d ${domain},*.${domain} --agree-tos -m ${email} --no-eff-email --non-interactive
     fi
 
-    ufw_close_80=""
-    crontab -l | sed 's/ufw allow 80 && //g' | crontab -
+    crontab -l | sed 's/.*certbot -q renew.*/0 2 * * * certbot -q renew/' | crontab -
 }
 
 issue_cert_standalone() {
@@ -1236,12 +1233,7 @@ issue_cert_standalone() {
     fi
 
     ufw delete allow 80 &> /dev/null
-    ufw_close_80="; ufw delete allow 80"
-
-    if [[ -z $(crontab -l | grep "ufw allow 80") ]]
-    then
-        crontab -l | sed 's/certbot -q renew --force-renewal/ufw allow 80 \&\& certbot -q renew --force-renewal/' | crontab -
-    fi
+    crontab -l | sed 's/.*certbot -q renew.*/0 2 * * * ufw allow 80 \&\& certbot -q renew; ufw delete allow 80/' | crontab -
 }
 
 change_domain() {
@@ -1295,11 +1287,11 @@ change_domain() {
 
     if [ ! -f /etc/haproxy/auth.lua ]
     then
-        echo "renew_hook = systemctl reload nginx${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = systemctl reload nginx" >> /etc/letsencrypt/renewal/${domain}.conf
         sed -i -e "s/$old_domain/$domain/g" /etc/nginx/nginx.conf
         systemctl reload nginx.service || systemctl start nginx.service
     else
-        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy${ufw_close_80}" >> /etc/letsencrypt/renewal/${domain}.conf
+        echo "renew_hook = cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem && systemctl reload haproxy" >> /etc/letsencrypt/renewal/${domain}.conf
         cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem
         rm /etc/haproxy/certs/${old_domain}.pem
         sed -i -e "s/$old_domain/$domain/g" /etc/haproxy/haproxy.cfg
