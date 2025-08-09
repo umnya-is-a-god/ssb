@@ -1091,6 +1091,7 @@ renew_cert() {
     else
         ufw allow 80 &> /dev/null && certbot renew --force-renewal
         cert_final_text
+        ufw delete allow 80 &> /dev/null
     fi
 
     echo ""
@@ -1409,7 +1410,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.3.0"
+    export version="1.3.1"
     export language="1"
     export -f get_ip
     export -f templates
