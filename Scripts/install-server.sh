@@ -141,82 +141,15 @@ start_message() {
 }
 
 crop_domain() {
-    if [[ "$domain" == "https://"* ]]
-    then
-        domain=${domain#"https://"}
-    fi
-
-    if [[ "$domain" == "http://"* ]]
-    then
-        domain=${domain#"http://"}
-    fi
-
-    if [[ "$domain" == "www."* ]]
-    then
-        domain=${domain#"www."}
-    fi
-
-    if [[ "$domain" =~ "/" ]]
-    then
-        domain=$(echo "${domain}" | cut -d "/" -f 1)
-    fi
+    domain=${domain#*"://"}
+    domain=${domain#"www."}
+    domain=$(echo "${domain}" | cut -d "/" -f 1)
 }
 
 crop_redirect_domain() {
-    if [[ "$redirect" == "https://"* ]]
-    then
-        redirect=${redirect#"https://"}
-    fi
-
-    if [[ "$redirect" == "http://"* ]]
-    then
-        redirect=${redirect#"http://"}
-    fi
-
-    if [[ "$redirect" == "www."* ]]
-    then
-        redirect=${redirect#"www."}
-    fi
-
-    if [[ "$redirect" =~ "/" ]]
-    then
-        redirect=$(echo "${redirect}" | cut -d "/" -f 1)
-    fi
-}
-
-crop_site_link() {
-    if [[ "$sitelink" == "https://"* ]]
-    then
-        sitelink=${sitelink#"https://"}
-    fi
-}
-
-crop_trojan_path() {
-    if [[ "$trojanpath" == "/"* ]]
-    then
-        trojanpath=${trojanpath#"/"}
-    fi
-}
-
-crop_vless_path() {
-    if [[ "$vlesspath" == "/"* ]]
-    then
-        vlesspath=${vlesspath#"/"}
-    fi
-}
-
-crop_subscription_path() {
-    if [[ "$subspath" == "/"* ]]
-    then
-        subspath=${subspath#"/"}
-    fi
-}
-
-crop_rulesetpath() {
-    if [[ "$rulesetpath" == "/"* ]]
-    then
-        rulesetpath=${rulesetpath#"/"}
-    fi
+    redirect=${redirect#*"://"}
+    redirect=${redirect#"www."}
+    redirect=$(echo "${redirect}" | cut -d "/" -f 1)
 }
 
 edit_index() {
@@ -225,21 +158,18 @@ edit_index() {
         index="/${index}"
     fi
 
-    if [[ "$index" == *"/" ]]
-    then
-        index=${index%"/"}
-    fi
+    index=${index%"/"}
 }
 
 check_ssh_port_ru() {
-    while [[ ! $sshp =~ ^[0-9]+$ ]] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ] || [ $sshp -gt 65535 ]
+    while [[ ! $sshp =~ ^[0-9]+$ ]] || [ $sshp -eq 80 ] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ] || [ $sshp -gt 65535 ]
     do
         if [[ ! $sshp =~ ^[0-9]+$ ]]
         then
             echo -e "${red}Ошибка: введённое значение не является числом${clear}"
-        elif [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ]
+        elif [ $sshp -eq 80 ] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ]
         then
-            echo -e "${red}Ошибка: порты 443, 10443, 11443 и 40000 будут заняты${clear}"
+            echo -e "${red}Ошибка: порты 80, 443, 10443, 11443 и 40000 будут заняты${clear}"
         elif [ $sshp -gt 65535 ]
         then
             echo -e "${red}Ошибка: номер порта не может быть больше 65535${clear}"
@@ -252,14 +182,14 @@ check_ssh_port_ru() {
 }
 
 check_ssh_port_en() {
-    while [[ ! $sshp =~ ^[0-9]+$ ]] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ] || [ $sshp -gt 65535 ]
+    while [[ ! $sshp =~ ^[0-9]+$ ]] || [ $sshp -eq 80 ] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ] || [ $sshp -gt 65535 ]
     do
         if [[ ! $sshp =~ ^[0-9]+$ ]]
         then
             echo -e "${red}Error: this is not a number${clear}"
-        elif [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ]
+        elif [ $sshp -eq 80 ] || [ $sshp -eq 443 ] || [ $sshp -eq 10443 ] || [ $sshp -eq 11443 ] || [ $sshp -eq 40000 ]
         then
-            echo -e "${red}Error: ports 443, 10443, 11443 and 40000 will be taken${clear}"
+            echo -e "${red}Error: ports 80, 443, 10443, 11443 and 40000 will be taken${clear}"
         elif [ $sshp -gt 65535 ]
         then
             echo -e "${red}Error: port number can't be greater than 65535${clear}"
@@ -436,7 +366,7 @@ check_trojan_path_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для Trojan или оставьте пустым для генерации случайного пути:"
         read trojanpath
         [[ ! -z $trojanpath ]] && echo ""
-        crop_trojan_path
+        trojanpath=${trojanpath#"/"}
     done
 }
 
@@ -448,7 +378,7 @@ check_trojan_path_en() {
         echo -e "${textcolor}[?]${clear} Enter your path for Trojan or leave this empty to generate a random path:"
         read trojanpath
         [[ ! -z $trojanpath ]] && echo ""
-        crop_trojan_path
+        trojanpath=${trojanpath#"/"}
     done
 }
 
@@ -465,7 +395,7 @@ check_vless_path_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для VLESS или оставьте пустым для генерации случайного пути:"
         read vlesspath
         [[ ! -z $vlesspath ]] && echo ""
-        crop_vless_path
+        vlesspath=${vlesspath#"/"}
     done
 }
 
@@ -482,7 +412,7 @@ check_vless_path_en() {
         echo -e "${textcolor}[?]${clear} Enter your path for VLESS or leave this empty to generate a random path:"
         read vlesspath
         [[ ! -z $vlesspath ]] && echo ""
-        crop_vless_path
+        vlesspath=${vlesspath#"/"}
     done
 }
 
@@ -499,7 +429,7 @@ check_subscription_path_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для подписки или оставьте пустым для генерации случайного пути:"
         read subspath
         [[ ! -z $subspath ]] && echo ""
-        crop_subscription_path
+        subspath=${subspath#"/"}
     done
 }
 
@@ -516,7 +446,7 @@ check_subscription_path_en() {
         echo -e "${textcolor}[?]${clear} Enter your subscription path or leave this empty to generate a random path:"
         read subspath
         [[ ! -z $subspath ]] && echo ""
-        crop_subscription_path
+        subspath=${subspath#"/"}
     done
 }
 
@@ -533,7 +463,7 @@ check_rulesetpath_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для наборов правил (rule sets) или оставьте пустым для генерации случайного пути:"
         read rulesetpath
         [[ ! -z $rulesetpath ]] && echo ""
-        crop_rulesetpath
+        rulesetpath=${rulesetpath#"/"}
     done
 }
 
@@ -550,7 +480,7 @@ check_rulesetpath_en() {
         echo -e "${textcolor}[?]${clear} Enter your path for rule sets or leave this empty to generate a random path:"
         read rulesetpath
         [[ ! -z $rulesetpath ]] && echo ""
-        crop_rulesetpath
+        rulesetpath=${rulesetpath#"/"}
     done
 }
 
@@ -627,7 +557,7 @@ check_site_link_ru() {
         echo -e "${textcolor}[?]${clear} Введите ссылку на главную страницу выбранного сайта:"
         read sitelink
         echo ""
-        crop_site_link
+        sitelink=${sitelink#*"://"}
     done
 }
 
@@ -646,7 +576,7 @@ check_site_link_en() {
         echo -e "${textcolor}[?]${clear} Enter the link to the main page of the selected website:"
         read sitelink
         echo ""
-        crop_site_link
+        sitelink=${sitelink#*"://"}
     done
 }
 
@@ -698,7 +628,7 @@ nginx_copy_site() {
         echo -e "${textcolor}[?]${clear} Введите ссылку на главную страницу выбранного сайта:"
         read sitelink
         echo ""
-        crop_site_link
+        sitelink=${sitelink#*"://"}
         check_site_link_ru
     else
         echo -e "${red}ATTENTION!${clear}"
@@ -709,7 +639,7 @@ nginx_copy_site() {
         echo -e "${textcolor}[?]${clear} Enter the link to the main page of the selected website:"
         read sitelink
         echo ""
-        crop_site_link
+        sitelink=${sitelink#*"://"}
         check_site_link_en
     fi
 }
@@ -893,7 +823,7 @@ enter_data_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для Trojan или оставьте пустым для генерации случайного пути:"
         read trojanpath
         [[ ! -z $trojanpath ]] && echo ""
-        crop_trojan_path
+        trojanpath=${trojanpath#"/"}
         check_trojan_path_ru
         echo -e "${textcolor}[?]${clear} Введите UUID для VLESS или оставьте пустым для генерации случайного UUID:"
         read uuid
@@ -902,18 +832,18 @@ enter_data_ru() {
         echo -e "${textcolor}[?]${clear} Введите путь для VLESS или оставьте пустым для генерации случайного пути:"
         read vlesspath
         [[ ! -z $vlesspath ]] && echo ""
-        crop_vless_path
+        vlesspath=${vlesspath#"/"}
         check_vless_path_ru
     fi
     echo -e "${textcolor}[?]${clear} Введите путь для подписки или оставьте пустым для генерации случайного пути:"
     read subspath
     [[ ! -z $subspath ]] && echo ""
-    crop_subscription_path
+    subspath=${subspath#"/"}
     check_subscription_path_ru
     echo -e "${textcolor}[?]${clear} Введите путь для наборов правил (rule sets) или оставьте пустым для генерации случайного пути:"
     read rulesetpath
     [[ ! -z $rulesetpath ]] && echo ""
-    crop_rulesetpath
+    rulesetpath=${rulesetpath#"/"}
     check_rulesetpath_ru
     echo -e "${textcolor}[?]${clear} Нужна ли настройка безопасности (SSH, UFW и unattended-upgrades)?"
     echo "1 - Да (в случае нестандартных настроек у хостера или ошибки при вводе данных можно потерять доступ к серверу)"
@@ -970,7 +900,7 @@ enter_data_en() {
         echo -e "${textcolor}[?]${clear} Enter your path for Trojan or leave this empty to generate a random path:"
         read trojanpath
         [[ ! -z $trojanpath ]] && echo ""
-        crop_trojan_path
+        trojanpath=${trojanpath#"/"}
         check_trojan_path_en
         echo -e "${textcolor}[?]${clear} Enter your UUID for VLESS or leave this empty to generate a random UUID:"
         read uuid
@@ -979,18 +909,18 @@ enter_data_en() {
         echo -e "${textcolor}[?]${clear} Enter your path for VLESS or leave this empty to generate a random path:"
         read vlesspath
         [[ ! -z $vlesspath ]] && echo ""
-        crop_vless_path
+        vlesspath=${vlesspath#"/"}
         check_vless_path_en
     fi
     echo -e "${textcolor}[?]${clear} Enter your subscription path or leave this empty to generate a random path:"
     read subspath
     [[ ! -z $subspath ]] && echo ""
-    crop_subscription_path
+    subspath=${subspath#"/"}
     check_subscription_path_en
     echo -e "${textcolor}[?]${clear} Enter your path for rule sets or leave this empty to generate a random path:"
     read rulesetpath
     [[ ! -z $rulesetpath ]] && echo ""
-    crop_rulesetpath
+    rulesetpath=${rulesetpath#"/"}
     check_rulesetpath_en
     echo -e "${textcolor}[?]${clear} Do you need security setup (SSH, UFW and unattended-upgrades)?"
     echo "1 - Yes (in case of hoster's non-standard settings or a mistake while entering data, access to the server might be lost)"

@@ -133,6 +133,18 @@ validate_local_template() {
     fi
 }
 
+show_users() {
+    usernum=$(ls -A1 /var/www/${subspath} | grep "CLIENT.json" | wc -l)
+    if [ ! -f /etc/haproxy/auth.lua ]
+    then
+        usernum=$(expr ${usernum} / 2)
+    fi
+    echo -e "${textcolor}Количество пользователей:${clear} ${usernum}"
+    ls -A1 /var/www/${subspath} | grep "CLIENT.json" | sed "s/-TRJ-CLIENT\.json//g" | sed "s/-VLESS-CLIENT\.json//g" | uniq
+    echo ""
+    main_menu
+}
+
 exit_username() {
     if [[ $username == "x" ]] || [[ $username == "х" ]]
     then
@@ -242,21 +254,18 @@ add_to_server_conf() {
 
 add_to_client_conf() {
     cp /var/www/${subspath}/template.json /var/www/${subspath}/${username}-TRJ-CLIENT.json
-    outboundnum=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-TRJ-CLIENT.json)
-    if [ ! -f /etc/haproxy/auth.lua ]
-    then
-        echo "$(jq ".outbounds[${outboundnum}].password = \"${trjpass}\" | .outbounds[${outboundnum}].transport.path = \"/${trojanpath}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
-    else
-        echo "$(jq ".outbounds[${outboundnum}].password = \"${trjpass}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
-    fi
     sed -i -e "s/$tempdomain/$domain/g" -e "s/$tempip/$serverip/g" -e "s/$temprulesetpath/$rulesetpath/g" /var/www/${subspath}/${username}-TRJ-CLIENT.json
+    outboundnum=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-TRJ-CLIENT.json)
 
-    if [ ! -f /etc/haproxy/auth.lua ]
+    if [ -f /etc/haproxy/auth.lua ]
     then
+        echo "$(jq ".outbounds[${outboundnum}].password = \"${trjpass}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
+    else
+        echo "$(jq ".outbounds[${outboundnum}].password = \"${trjpass}\" | .outbounds[${outboundnum}].transport.path = \"/${trojanpath}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
         cp /var/www/${subspath}/template.json /var/www/${subspath}/${username}-VLESS-CLIENT.json
-        outboundnum=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-VLESS-CLIENT.json)
-        echo "$(jq ".outbounds[${outboundnum}].password = \"${uuid}\" | .outbounds[${outboundnum}].transport.path = \"/${vlesspath}\" | .outbounds[${outboundnum}].type = \"vless\" | .outbounds[${outboundnum}] |= with_entries(.key |= if . == \"password\" then \"uuid\" else . end)" /var/www/${subspath}/${username}-VLESS-CLIENT.json)" > /var/www/${subspath}/${username}-VLESS-CLIENT.json
         sed -i -e "s/$tempdomain/$domain/g" -e "s/$tempip/$serverip/g" -e "s/$temprulesetpath/$rulesetpath/g" /var/www/${subspath}/${username}-VLESS-CLIENT.json
+        outboundnum=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-VLESS-CLIENT.json)
+        echo "$(jq ".outbounds[${outboundnum}].type = \"vless\" | .outbounds[${outboundnum}] |= with_entries(.key |= if . == \"password\" then \"uuid\" else . end) | .outbounds[${outboundnum}].uuid = \"${uuid}\" | .outbounds[${outboundnum}].transport.path = \"/${vlesspath}\"" /var/www/${subspath}/${username}-VLESS-CLIENT.json)" > /var/www/${subspath}/${username}-VLESS-CLIENT.json
     fi
 
     echo -e "Пользователь ${textcolor}${username}${clear} добавлен:"
@@ -275,6 +284,19 @@ add_to_auth_lua() {
         sed -i "2i \ \ \ \ [\"${passhash}\"] = true," /etc/haproxy/auth.lua
         systemctl reload haproxy.service
     fi
+}
+
+add_users() {
+    validate_template
+    while [[ $username != "x" ]] && [[ $username != "х" ]]
+    do
+        enter_user_data_add
+        generate_pass
+        add_to_auth_lua
+        add_to_server_conf
+        add_to_client_conf
+    done
+    main_menu
 }
 
 check_username_del() {
@@ -332,12 +354,78 @@ del_from_auth_lua() {
     fi
 }
 
-sync_github_message() {
-    echo -e "${red}ВНИМАНИЕ!${clear}"
-    echo "Настройки в клиентских конфигах всех пользователей будут синхронизированы с последней версией на GitHub"
+delete_users() {
+    while [[ $username != "x" ]] && [[ $username != "х" ]]
+    do
+        enter_user_data_del
+        del_from_auth_lua
+        del_from_server_conf
+        del_client_conf
+    done
+    main_menu
+}
+
+stack_text() {
+    echo -e "${textcolor}[?]${clear} Выберите \"stack\" для пользователя ${textcolor}${username}${clear}:"
+    echo "0 - Выйти"
+    echo "1 - \"system\" (системный стек, лучшая производительность, значение по умолчанию)    ${stack_sel_1}"
+    echo "2 - \"gvisor\" (запускается в userspace, рекомендуется, если не работает \"system\")   ${stack_sel_2}"
+    echo "3 - \"mixed\" (смешанный вариант: \"system\" для TCP, \"gvisor\" для UDP)                ${stack_sel_3}"
+    read stackoption
     echo ""
-    echo -e "${textcolor}[?]${clear} Нажмите ${textcolor}Enter${clear}, чтобы синхронизировать настройки, или введите ${textcolor}x${clear}, чтобы выйти:"
-    read sync
+}
+
+change_stack() {
+    while [[ $username != "x" ]] && [[ $username != "х" ]]
+    do
+        enter_user_data_del
+
+        if [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "system" ]]
+        then
+            stack_sel_1="[Выбрано]"
+            stack_sel_2=""
+            stack_sel_3=""
+        elif [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "gvisor" ]]
+        then
+            stack_sel_1=""
+            stack_sel_2="[Выбрано]"
+            stack_sel_3=""
+        elif [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "mixed" ]]
+        then
+            stack_sel_1=""
+            stack_sel_2=""
+            stack_sel_3="[Выбрано]"
+        fi
+
+        stack_text
+
+        case $stackoption in
+            1)
+            stack_value="system"
+            ;;
+            2)
+            stack_value="gvisor"
+            ;;
+            3)
+            stack_value="mixed"
+            ;;
+            *)
+            main_menu
+        esac
+
+        inboundnum=$(jq '[.inbounds[].tag] | index("tun-in")' /var/www/${subspath}/${username}-TRJ-CLIENT.json)
+        echo "$(jq ".inbounds[${inboundnum}].stack = \"${stack_value}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
+
+        if [ ! -f /etc/haproxy/auth.lua ]
+        then
+            inboundnum=$(jq '[.inbounds[].tag] | index("tun-in")' /var/www/${subspath}/${username}-VLESS-CLIENT.json)
+            echo "$(jq ".inbounds[${inboundnum}].stack = \"${stack_value}\"" /var/www/${subspath}/${username}-VLESS-CLIENT.json)" > /var/www/${subspath}/${username}-VLESS-CLIENT.json
+        fi
+
+        inboundnum=""
+        echo -e "Изменение \"stack\" у пользователя ${textcolor}${username}${clear} завершено, для применения новых настроек обновите конфиг на клиенте"
+        echo ""
+    done
 }
 
 exit_sync() {
@@ -356,6 +444,24 @@ check_users() {
         echo ""
         main_menu
     fi
+}
+
+sync_github_message() {
+    echo -e "${red}ВНИМАНИЕ!${clear}"
+    echo "Настройки в клиентских конфигах всех пользователей будут синхронизированы с последней версией на GitHub"
+    echo ""
+    echo -e "${textcolor}[?]${clear} Нажмите ${textcolor}Enter${clear}, чтобы синхронизировать настройки, или введите ${textcolor}x${clear}, чтобы выйти:"
+    read sync
+}
+
+sync_local_message() {
+    echo -e "${red}ВНИМАНИЕ!${clear}"
+    echo -e "Вы можете вручную отредактировать настройки в шаблоне ${textcolor}/var/www/${subspath}/template-loc.json${clear}"
+    echo "Настройки в этом файле будут применены к клиентским конфигам всех пользователей"
+    echo "При редактировании не меняйте значения \"tag\" у \"inbounds\" и \"outbounds\""
+    echo ""
+    echo -e "${textcolor}[?]${clear} Нажмите ${textcolor}Enter${clear}, чтобы синхронизировать настройки, или введите ${textcolor}x${clear}, чтобы выйти:"
+    read sync
 }
 
 get_pass() {
@@ -433,16 +539,6 @@ sync_client_configs_github() {
     echo ""
 }
 
-sync_local_message() {
-    echo -e "${red}ВНИМАНИЕ!${clear}"
-    echo -e "Вы можете вручную отредактировать настройки в шаблоне ${textcolor}/var/www/${subspath}/template-loc.json${clear}"
-    echo "Настройки в этом файле будут применены к клиентским конфигам всех пользователей"
-    echo "При редактировании не меняйте значения \"tag\" у \"inbounds\" и \"outbounds\""
-    echo ""
-    echo -e "${textcolor}[?]${clear} Нажмите ${textcolor}Enter${clear}, чтобы синхронизировать настройки, или введите ${textcolor}x${clear}, чтобы выйти:"
-    read sync
-}
-
 sync_client_configs_local() {
     loctempip=$(jq -r '.route.rules[] | select(has("ip_cidr")) | .ip_cidr[0]' /var/www/${subspath}/template-loc.json)
     loctempdomain=$(jq -r '.outbounds[] | select(.tag=="proxy") | .server' /var/www/${subspath}/template-loc.json)
@@ -470,105 +566,6 @@ sync_client_configs_local() {
     chmod -R 755 /var/www/${rulesetpath}
     echo "Синхронизация настроек с локальным шаблоном завершена"
     echo ""
-}
-
-show_users() {
-    usernum=$(ls -A1 /var/www/${subspath} | grep "CLIENT.json" | wc -l)
-    if [ ! -f /etc/haproxy/auth.lua ]
-    then
-        usernum=$(expr ${usernum} / 2)
-    fi
-    echo -e "${textcolor}Количество пользователей:${clear} ${usernum}"
-    ls -A1 /var/www/${subspath} | grep "CLIENT.json" | sed "s/-TRJ-CLIENT\.json//g" | sed "s/-VLESS-CLIENT\.json//g" | uniq
-    echo ""
-    main_menu
-}
-
-add_users() {
-    validate_template
-    while [[ $username != "x" ]] && [[ $username != "х" ]]
-    do
-        enter_user_data_add
-        generate_pass
-        add_to_auth_lua
-        add_to_server_conf
-        add_to_client_conf
-    done
-    main_menu
-}
-
-delete_users() {
-    while [[ $username != "x" ]] && [[ $username != "х" ]]
-    do
-        enter_user_data_del
-        del_from_auth_lua
-        del_from_server_conf
-        del_client_conf
-    done
-    main_menu
-}
-
-stack_text() {
-    echo -e "${textcolor}[?]${clear} Выберите \"stack\" для пользователя ${textcolor}${username}${clear}:"
-    echo "0 - Выйти"
-    echo "1 - \"system\" (системный стек, лучшая производительность, значение по умолчанию)    ${stack_sel_1}"
-    echo "2 - \"gvisor\" (запускается в userspace, рекомендуется, если не работает \"system\")   ${stack_sel_2}"
-    echo "3 - \"mixed\" (смешанный вариант: \"system\" для TCP, \"gvisor\" для UDP)                ${stack_sel_3}"
-    read stackoption
-    echo ""
-}
-
-change_stack() {
-    while [[ $username != "x" ]] && [[ $username != "х" ]]
-    do
-        enter_user_data_del
-
-        if [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "system" ]]
-        then
-            stack_sel_1="[Выбрано]"
-            stack_sel_2=""
-            stack_sel_3=""
-        elif [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "gvisor" ]]
-        then
-            stack_sel_1=""
-            stack_sel_2="[Выбрано]"
-            stack_sel_3=""
-        elif [[ $(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' /var/www/${subspath}/${username}-TRJ-CLIENT.json) == "mixed" ]]
-        then
-            stack_sel_1=""
-            stack_sel_2=""
-            stack_sel_3="[Выбрано]"
-        fi
-
-        stack_text
-
-        case $stackoption in
-            1)
-            stack_value="system"
-            ;;
-            2)
-            stack_value="gvisor"
-            ;;
-            3)
-            stack_value="mixed"
-            ;;
-            *)
-            main_menu
-        esac
-
-        inboundnum=$(jq '[.inbounds[].tag] | index("tun-in")' /var/www/${subspath}/${username}-TRJ-CLIENT.json)
-        echo "$(jq ".inbounds[${inboundnum}].stack = \"${stack_value}\"" /var/www/${subspath}/${username}-TRJ-CLIENT.json)" > /var/www/${subspath}/${username}-TRJ-CLIENT.json
-
-        if [ ! -f /etc/haproxy/auth.lua ]
-        then
-            inboundnum=$(jq '[.inbounds[].tag] | index("tun-in")' /var/www/${subspath}/${username}-VLESS-CLIENT.json)
-            echo "$(jq ".inbounds[${inboundnum}].stack = \"${stack_value}\"" /var/www/${subspath}/${username}-VLESS-CLIENT.json)" > /var/www/${subspath}/${username}-VLESS-CLIENT.json
-        fi
-
-        inboundnum=""
-        echo -e "Изменение \"stack\" у пользователя ${textcolor}${username}${clear} завершено, для применения новых настроек обновите конфиг на клиенте"
-        echo ""
-    done
 }
 
 sync_client_configs() {
@@ -724,29 +721,9 @@ exit_add_warp() {
     fi
 }
 
-exit_del_warp() {
-    if [[ $delwarp == "x" ]] || [[ $delwarp == "х" ]]
-    then
-        delwarp=""
-        main_menu
-    fi
-}
-
 crop_newwarp() {
-    if [[ "$newwarp" == "https://"* ]]
-    then
-        newwarp=${newwarp#"https://"}
-    fi
-
-    if [[ "$newwarp" == "http://"* ]]
-    then
-        newwarp=${newwarp#"http://"}
-    fi
-
-    if [[ "$newwarp" =~ "/" ]]
-    then
-        newwarp=$(echo "${newwarp}" | cut -d "/" -f 1)
-    fi
+    newwarp=${newwarp#*"://"}
+    newwarp=$(echo "${newwarp}" | cut -d "/" -f 1)
 }
 
 check_warp_domain_add() {
@@ -767,18 +744,6 @@ check_warp_domain_add() {
     done
 }
 
-check_warp_domain_del() {
-    while [[ -z $(jq '.route.rules[] | select(.outbound=="warp") | .domain_suffix[]' /etc/sing-box/config.json | grep "\"${delwarp}\"") ]] || [ -z "$delwarp" ]
-    do
-        echo -e "${red}Ошибка: этот домен/суффикс не добавлен в WARP${clear}"
-        echo ""
-        echo -e "${textcolor}[?]${clear} Введите домен/суффикс для удаления из WARP или введите ${textcolor}x${clear}, чтобы закончить:"
-        read delwarp
-        echo ""
-        exit_del_warp
-    done
-}
-
 add_warp_domains() {
     check_warp
     warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
@@ -794,6 +759,26 @@ add_warp_domains() {
         systemctl reload sing-box.service
         echo -e "Домен/суффикс ${textcolor}${newwarp}${clear} добавлен в WARP"
         echo ""
+    done
+}
+
+exit_del_warp() {
+    if [[ $delwarp == "x" ]] || [[ $delwarp == "х" ]]
+    then
+        delwarp=""
+        main_menu
+    fi
+}
+
+check_warp_domain_del() {
+    while [[ -z $(jq '.route.rules[] | select(.outbound=="warp") | .domain_suffix[]' /etc/sing-box/config.json | grep "\"${delwarp}\"") ]] || [ -z "$delwarp" ]
+    do
+        echo -e "${red}Ошибка: этот домен/суффикс не добавлен в WARP${clear}"
+        echo ""
+        echo -e "${textcolor}[?]${clear} Введите домен/суффикс для удаления из WARP или введите ${textcolor}x${clear}, чтобы закончить:"
+        read delwarp
+        echo ""
+        exit_del_warp
     done
 }
 
@@ -1107,25 +1092,9 @@ exit_change_domain() {
 }
 
 crop_domain() {
-    if [[ "$domain" == "https://"* ]]
-    then
-        domain=${domain#"https://"}
-    fi
-
-    if [[ "$domain" == "http://"* ]]
-    then
-        domain=${domain#"http://"}
-    fi
-
-    if [[ "$domain" == "www."* ]]
-    then
-        domain=${domain#"www."}
-    fi
-
-    if [[ "$domain" =~ "/" ]]
-    then
-        domain=$(echo "${domain}" | cut -d "/" -f 1)
-    fi
+    domain=${domain#*"://"}
+    domain=${domain#"www."}
+    domain=$(echo "${domain}" | cut -d "/" -f 1)
 }
 
 get_test_response() {
