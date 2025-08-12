@@ -62,19 +62,13 @@ extract_values() {
 insert_values() {
     inboundnumbertr=$(jq '[.inbounds[].tag] | index("trojan-in")' /etc/sing-box/config.json)
     inboundnumbervl=$(jq '[.inbounds[].tag] | index("vless-in")' /etc/sing-box/config.json)
-
-    echo "$(jq </etc/sing-box/config.json "del(.inbounds[${inboundnumbertr}].users[0])")" > /etc/sing-box/config.json
-    echo "$(jq ".inbounds[${inboundnumbertr}].users |= . + ${userstr}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+    warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
+    echo "$(jq ".inbounds[${inboundnumbertr}].users |= ${userstr} | .inbounds[${inboundnumbertr}].transport.path = \"/${trojanpath}\" | .inbounds[${inboundnumbervl}].transport.path = \"/${vlesspath}\" | .route.rules[${warpnum}].domain_suffix |= ${warp_domain_suffix}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [ ! -f /etc/haproxy/auth.lua ]
     then
-        echo "$(jq </etc/sing-box/config.json "del(.inbounds[${inboundnumbervl}].users[0])")" > /etc/sing-box/config.json
-        echo "$(jq ".inbounds[${inboundnumbervl}].users |= . + ${usersvl}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
+        echo "$(jq ".inbounds[${inboundnumbervl}].users |= ${usersvl}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
-
-    echo "$(jq ".inbounds[${inboundnumbertr}].transport.path = \"/${trojanpath}\" | .inbounds[${inboundnumbervl}].transport.path = \"/${vlesspath}\"" /etc/sing-box/config.json)" > /etc/sing-box/config.json
-    warpnum=$(jq '[.route.rules[].outbound] | index("warp")' /etc/sing-box/config.json)
-    echo "$(jq ".route.rules[${warpnum}].domain_suffix |= ${warp_domain_suffix}" /etc/sing-box/config.json)" > /etc/sing-box/config.json
 
     if [[ "${transport}" == "httpupgrade" ]]
     then
