@@ -14,4 +14,7 @@ done
 wget -q -O /var/www/${rulesetpath}/torrent-clients.json.1 https://raw.githubusercontent.com/FPPweb3/sb-rule-sets/main/torrent-clients.json && mv -f /var/www/${rulesetpath}/torrent-clients.json.1 /var/www/${rulesetpath}/torrent-clients.json
 wget -q -O /var/www/${rulesetpath}/geoip-ru.srs.1 https://github.com/SagerNet/sing-geoip/raw/rule-set/geoip-ru.srs && mv -f /var/www/${rulesetpath}/geoip-ru.srs.1 /var/www/${rulesetpath}/geoip-ru.srs
 chmod -R 755 /var/www/${rulesetpath}
+
+# Additional optimization:
 journalctl --vacuum-time=7days &> /dev/null
+[[ $(systemctl is-active warp-svc.service) == "active" ]] && systemctl restart warp-svc.service
