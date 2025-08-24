@@ -1146,6 +1146,7 @@ check_cf_token() {
     do
         echo ""
         echo -e "${red}Ошибка: неправильно введён домен, API токен/ключ или почта${clear}"
+        echo -e "${red}Инструкция: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-settings-ru.md#получение-api-токена-cloudflare${clear}"
         enter_domain_data
         echo "Проверка домена, API токена/ключа и почты..."
         get_test_response

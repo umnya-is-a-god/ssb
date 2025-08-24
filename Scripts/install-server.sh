@@ -19,7 +19,7 @@ check_root() {
     if [[ $EUID -ne 0 ]]
     then
         echo ""
-        echo -e "${red}Error: this script should be run as root, use \"sudo -i\" command${clear}"
+        echo -e "${red}Error: this script should be run as root, use \"sudo -i\" command first${clear}"
         echo ""
         exit 1
     fi
@@ -103,40 +103,30 @@ enter_language() {
     echo ""
 }
 
-start_message_ru() {
-    echo -e "${red}ВНИМАНИЕ!${clear}"
-    echo "Запускайте скрипт на чистой системе"
-    echo ""
-    echo "Перед запуском скрипта рекомендуется выполнить следующие действия:"
-    echo -e "1) Обновить систему командой ${textcolor}apt update -y && apt full-upgrade -y${clear}"
-    echo -e "2) Перезагрузить сервер командой ${textcolor}reboot${clear}"
-    echo -e "3) При наличии своего сайта отправить папку с его файлами в ${textcolor}/root${clear} директорию сервера"
-    echo ""
-    echo -e "Если это сделано, то нажмите ${textcolor}Enter${clear}, чтобы продолжить"
-    echo -e "В противном случае нажмите ${textcolor}Ctrl + C${clear} для завершения работы скрипта"
-    read BigRedButton
-}
-
-start_message_en() {
-    echo -e "${red}ATTENTION!${clear}"
-    echo "Run the script on a newly installed system"
-    echo ""
-    echo "Before running the script, it's recommended to do the following:"
-    echo -e "1) Update the system (${textcolor}apt update -y && apt full-upgrade -y${clear})"
-    echo -e "2) Reboot the server (${textcolor}reboot${clear})"
-    echo -e "3) If you have your own website, then send the folder with its contents to the ${textcolor}/root${clear} directory of the server"
-    echo ""
-    echo -e "If it's done, then press ${textcolor}Enter${clear} to continue"
-    echo -e "If not, then press ${textcolor}Ctrl + C${clear} to exit the script"
-    read BigRedButton
-}
-
 start_message() {
     if [[ "${language}" == "1" ]]
     then
-        start_message_ru
+        echo -e "${red}ВНИМАНИЕ!${clear}"
+        echo "Запускайте скрипт на чистой системе"
+        echo ""
+        echo "Перед запуском скрипта нужно выполнить следующие действия:"
+        echo -e "1) Обновить систему на сервере командой ${textcolor}apt update -y && apt full-upgrade -y${clear}"
+        echo -e "2) Перезагрузить сервер командой ${textcolor}reboot${clear}"
+        echo ""
+        echo -e "Если это сделано, то нажмите ${textcolor}Enter${clear}, чтобы продолжить"
+        echo -e "В противном случае нажмите ${textcolor}Ctrl + C${clear} для завершения работы скрипта"
+        read BigRedButton
     else
-        start_message_en
+        echo -e "${red}ATTENTION!${clear}"
+        echo "Run the script on a newly installed system"
+        echo ""
+        echo "Before running the script, it's necessary to do the following:"
+        echo -e "1) Update the system on the server (${textcolor}apt update -y && apt full-upgrade -y${clear})"
+        echo -e "2) Reboot the server (${textcolor}reboot${clear})"
+        echo ""
+        echo -e "If it's done, then press ${textcolor}Enter${clear} to continue"
+        echo -e "If not, then press ${textcolor}Ctrl + C${clear} to exit the script"
+        read BigRedButton
     fi
 }
 
@@ -257,7 +247,7 @@ check_password_en() {
     do
         if [[ $password =~ " " ]]
         then
-            echo -e "${red}Error: password should not contain spaces${clear}"
+            echo -e "${red}Error: the password should not contain spaces${clear}"
             echo ""
         elif [[ -z $password ]]
         then
@@ -288,6 +278,7 @@ check_cf_token_ru() {
     do
         echo ""
         echo -e "${red}Ошибка: неправильно введён домен, API токен/ключ или почта${clear}"
+        echo -e "${red}Инструкция: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-settings-ru.md#получение-api-токена-cloudflare${clear}"
         enter_domain_data_ru
         echo "Проверка домена, API токена/ключа и почты..."
         get_test_response
@@ -305,6 +296,7 @@ check_cf_token_en() {
     do
         echo ""
         echo -e "${red}Error: invalid domain name, API token/key or email${clear}"
+        echo -e "${red}Instruction: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-settings-en.md#getting-cloudflare-api-token${clear}"
         enter_domain_data_en
         echo "Checking domain name, API token/key and email..."
         get_test_response
@@ -491,7 +483,7 @@ check_redirect_domain_ru() {
         then
             :
         else
-            echo -e "${red}Ошибка: домен введён неправильно или не имеет HTTPS${clear}"
+            echo -e "${red}Ошибка: домен введён неправильно или не имеет HTTPS, выберите другой домен${clear}"
             echo ""
         fi
         echo -e "${textcolor}[?]${clear} Введите домен, на который будет идти перенаправление:"
@@ -508,7 +500,7 @@ check_redirect_domain_en() {
         then
             :
         else
-            echo -e "${red}Error: this domain is invalid or does not have HTTPS${clear}"
+            echo -e "${red}Error: this domain is invalid or does not have HTTPS, select another domain${clear}"
             echo ""
         fi
         echo -e "${textcolor}[?]${clear} Enter the domain to which requests will be redirected:"
@@ -521,7 +513,7 @@ check_redirect_domain_en() {
 check_index_ru() {
     while [[ $index =~ " " ]] || [ ! -f /root${index} ] || [ -z "$index" ]
     do
-        echo -e "${red}Ошибка: файл /root${index} не существует${clear}"
+        echo -e "${red}Ошибка: файл /root${index} не существует, проверьте, загружена ли папка вашего сайта в /root директорию сервера${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Введите путь до index файла внутри папки вашего сайта (например, /site_folder/index.html):"
         read index
@@ -533,7 +525,7 @@ check_index_ru() {
 check_index_en() {
     while [[ $index =~ " " ]] || [ ! -f /root${index} ] || [ -z "$index" ]
     do
-        echo -e "${red}Error: file /root${index} doesn't exist${clear}"
+        echo -e "${red}Error: file /root${index} doesn't exist, check if the folder of your website is uploaded to the /root directory of the server${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Enter the path to the index file inside the folder of your website (e. g., /site_folder/index.html):"
         read index
@@ -551,7 +543,7 @@ check_site_link_ru() {
         then
             :
         else
-            echo -e "${red}Ошибка: сайт недоступен по данной ссылке или не имеет HTTPS${clear}"
+            echo -e "${red}Ошибка: сайт недоступен по данной ссылке или не имеет HTTPS, выберите другой сайт${clear}"
             echo ""
         fi
         echo -e "${textcolor}[?]${clear} Введите ссылку на главную страницу выбранного сайта:"
@@ -570,7 +562,7 @@ check_site_link_en() {
         then
             :
         else
-            echo -e "${red}Error: the website is not available or does not have HTTPS${clear}"
+            echo -e "${red}Error: the website is not available or does not have HTTPS, select another website${clear}"
             echo ""
         fi
         echo -e "${textcolor}[?]${clear} Enter the link to the main page of the selected website:"
@@ -652,12 +644,20 @@ nginx_site() {
 
     if [[ "${language}" == "1" ]]
     then
+        echo -e "${red}ВНИМАНИЕ!${clear}"
+        echo -e "Сначала загрузите папку с файлами вашего сайта в ${textcolor}/root${clear} директорию сервера"
+        echo "Вы можете сделать это с помощью SFTP или SCP через другое окно, не прерывая работу скрипта"
+        echo ""
         echo -e "${textcolor}[?]${clear} Введите путь до index файла внутри папки вашего сайта (например, /site_folder/index.html):"
         read index
         echo ""
         edit_index
         check_index_ru
     else
+        echo -e "${red}ATTENTION!${clear}"
+        echo -e "First, upload the folder with the contents of your website to the ${textcolor}/root${clear} directory of the server"
+        echo "You can do this via SFTP or SCP in another window without interrupting the script"
+        echo ""
         echo -e "${textcolor}[?]${clear} Enter the path to the index file inside the folder of your website (e. g., /site_folder/index.html):"
         read index
         echo ""

@@ -9,7 +9,7 @@ check_root() {
     if [[ $EUID -ne 0 ]]
     then
         echo ""
-        echo -e "${red}Error: this command should be run as root, use \"sudo -i\" command${clear}"
+        echo -e "${red}Error: this command should be run as root, use \"sudo -i\" command first${clear}"
         echo ""
         exit 1
     fi
@@ -1146,6 +1146,7 @@ check_cf_token() {
     do
         echo ""
         echo -e "${red}Error: invalid domain name, API token/key or email${clear}"
+        echo -e "${red}Instruction: https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/cf-settings-en.md#getting-cloudflare-api-token${clear}"
         enter_domain_data
         echo "Checking domain name, API token/key and email..."
         get_test_response
