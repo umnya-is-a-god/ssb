@@ -32,18 +32,16 @@ Then extract sing-box.exe from the archive.
 
 ```
 @echo off
-echo Started sing-box
-echo.
-echo Do not close this window while sing-box is running
-echo.
+echo Started Sing-Box
+echo Do not close this window while Sing-Box is running
 echo Press Ctrl + C to disconnect
 echo.
 if not exist "C:\1-sbconfig\" mkdir C:\1-sbconfig
-curl --silent -o C:\1-sbconfig\client.json https://domain.com/secret175subscr1pt10n/1-me-VLESS-CLIENT.json
+curl --silent -o C:\1-sbconfig\client.json https://example.com/secret175subscr1pt10n/username-VLESS-CLIENT.json
 sing-box run -c C:\1-sbconfig\client.json
 ```
 
-Change the link in the 9th line to yours.
+Change the link in the 7th line to yours.
 
 For Windows versions without winget replace the last line like this and replace the path to sing-box.exe to your actual path:
 
@@ -55,7 +53,7 @@ C:\actual\path\to\sing-box.exe run -c C:\1-sbconfig\client.json
 
 ### 3) Create a shortcut for this .cmd or .bat file
 
-Then change the settings of the shortcut to run it as admin.
+Then change the settings of the shortcut to run it as admin:
 
 ![w2](https://github.com/user-attachments/assets/18d9550a-0ba1-4331-b8b3-d80edd3a7362)
 

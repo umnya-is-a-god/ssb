@@ -54,16 +54,8 @@ templates() {
 
 get_ip() {
     serverip=$(curl -s -4 https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
-
-    if [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
-    then
-        serverip=$(curl -s ipinfo.io/ip)
-    fi
-
-    if [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
-    then
-        serverip=$(curl -s 2ip.io)
-    fi
+    [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && serverip=$(curl -s ipinfo.io/ip)
+    [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && serverip=$(curl -s 2ip.io)
 }
 
 get_data() {
@@ -135,10 +127,7 @@ validate_local_template() {
 
 show_users() {
     usernum=$(ls -A1 /var/www/${subspath} | grep "CLIENT.json" | wc -l)
-    if [ ! -f /etc/haproxy/auth.lua ]
-    then
-        usernum=$(expr ${usernum} / 2)
-    fi
+    [ ! -f /etc/haproxy/auth.lua ] && usernum=$(expr ${usernum} / 2)
     echo -e "${textcolor}Number of users:${clear} ${usernum}"
     ls -A1 /var/www/${subspath} | grep "CLIENT.json" | sed "s/-TRJ-CLIENT\.json//g" | sed "s/-VLESS-CLIENT\.json//g" | uniq
     echo ""
@@ -170,12 +159,12 @@ check_username_add() {
         fi
         echo -e "${textcolor}[?]${clear} Enter the name of the new user or enter ${textcolor}x${clear} to exit:"
         read username
-        [[ ! -z $username ]] && echo ""
+        [[ -n $username ]] && echo ""
     done
 }
 
 check_trjpass() {
-    while ([[ $trjpass =~ '"' ]] || [[ $(jq "any(.inbounds[].users[]; .password == \"$trjpass\")" /etc/sing-box/config.json) == "true" ]]) && [ ! -z "$trjpass" ]
+    while ([[ $trjpass =~ '"' ]] || [[ $(jq "any(.inbounds[].users[]; .password == \"$trjpass\")" /etc/sing-box/config.json) == "true" ]]) && [ -n "$trjpass" ]
     do
         if [[ $trjpass =~ '"' ]]
         then
@@ -186,12 +175,12 @@ check_trjpass() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter the password for Trojan or leave this empty to generate a random password:"
         read trjpass
-        [[ ! -z $trjpass ]] && echo ""
+        [[ -n $trjpass ]] && echo ""
     done
 }
 
 check_uuid() {
-    while ([[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] || [[ $(jq "any(.inbounds[].users[]; .uuid == \"$uuid\")" /etc/sing-box/config.json) == "true" ]]) && [ ! -z "$uuid" ]
+    while ([[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] || [[ $(jq "any(.inbounds[].users[]; .uuid == \"$uuid\")" /etc/sing-box/config.json) == "true" ]]) && [ -n "$uuid" ]
     do
         if [[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]]
         then
@@ -203,40 +192,33 @@ check_uuid() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter the UUID for VLESS or leave this empty to generate a random UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
     done
 }
 
 enter_user_data_add() {
     echo -e "${textcolor}[?]${clear} Enter the name of the new user or enter ${textcolor}x${clear} to exit:"
     read username
-    [[ ! -z $username ]] && echo ""
+    [[ -n $username ]] && echo ""
     check_username_add
     exit_username
     echo -e "${textcolor}[?]${clear} Enter the password for Trojan or leave this empty to generate a random password:"
     read trjpass
-    [[ ! -z $trjpass ]] && echo ""
+    [[ -n $trjpass ]] && echo ""
     check_trjpass
 
     if [ ! -f /etc/haproxy/auth.lua ]
     then
         echo -e "${textcolor}[?]${clear} Enter the UUID for VLESS or leave this empty to generate a random UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
         check_uuid
     fi
 }
 
 generate_pass() {
-    if [ -z "$trjpass" ]
-    then
-        trjpass=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
-    if [ ! -f /etc/haproxy/auth.lua ] && [ -z "$uuid" ]
-    then
-        uuid=$(sing-box generate uuid)
-    fi
+    [ -z "$trjpass" ] && trjpass=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
+    [ ! -f /etc/haproxy/auth.lua ] && [ -z "$uuid" ] && uuid=$(sing-box generate uuid)
 }
 
 add_to_server_conf() {
@@ -270,10 +252,7 @@ add_to_client_conf() {
 
     echo -e "Added user ${textcolor}${username}${clear}:"
     echo "https://${domain}/${subspath}/${username}-TRJ-CLIENT.json"
-    if [ ! -f /etc/haproxy/auth.lua ]
-    then
-        echo "https://${domain}/${subspath}/${username}-VLESS-CLIENT.json"
-    fi
+    [ ! -f /etc/haproxy/auth.lua ] && echo "https://${domain}/${subspath}/${username}-VLESS-CLIENT.json"
     echo ""
 }
 
@@ -466,6 +445,7 @@ sync_local_message() {
 
 get_pass() {
     stack=$(jq -r '.inbounds[] | select(.tag=="tun-in") | .stack' ${file})
+    [[ $(jq '.outbounds[] | select(.tag=="proxy") | .transport | has("headers")' ${file}) == "true" ]] && cfip=$(jq -r '.outbounds[] | select(.tag=="proxy") | .server' ${file})
 
     if grep -q ": \"trojan\"" "$file"
     then
@@ -474,11 +454,6 @@ get_pass() {
     else
         protocol="vless"
         cred=$(jq -r '.outbounds[] | select(.tag=="proxy") | .uuid' ${file})
-    fi
-
-    if [[ $(jq '.outbounds[] | select(.tag=="proxy") | .transport | has("headers")' ${file}) == "true" ]]
-    then
-        cfip=$(jq -r '.outbounds[] | select(.tag=="proxy") | .server' ${file})
     fi
 }
 
@@ -508,11 +483,7 @@ edit_configs_sync() {
             sed -i -e "s/$loctempdomain/$domain/g" -e "s/$loctempip/$serverip/g" -e "s/$loctemprulesetpath/$rulesetpath/g" ${file}
         fi
 
-        if [[ ! -z $cfip ]]
-        then
-            echo "$(jq ".outbounds[${outboundnum}].server = \"${cfip}\" | .outbounds[${outboundnum}].transport.headers |= {\"Host\":\"${domain}\"} | .route.rule_set[].download_detour = \"proxy\"" ${file})" > ${file}
-        fi
-
+        [[ -n $cfip ]] && echo "$(jq ".outbounds[${outboundnum}].server = \"${cfip}\" | .outbounds[${outboundnum}].transport.headers |= {\"Host\":\"${domain}\"} | .route.rule_set[].download_detour = \"proxy\"" ${file})" > ${file}
         cfip=""
         cred=""
         inboundnum=""
@@ -528,10 +499,7 @@ sync_client_configs_github() {
     do
         ruleset_link=$(jq -r ".route.rule_set[${i}].url" /var/www/${subspath}/template.json)
         ruleset=${ruleset_link#"https://${tempdomain}/${temprulesetpath}/"}
-        if [ ! -f /var/www/${rulesetpath}/${ruleset} ]
-        then
-            wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
-        fi
+        [ ! -f /var/www/${rulesetpath}/${ruleset} ] && wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
     done
 
     chmod -R 755 /var/www/${rulesetpath}
@@ -556,10 +524,7 @@ sync_client_configs_local() {
         do
             ruleset_link=$(jq -r ".route.rule_set[${i}].url" /var/www/${subspath}/template-loc.json)
             ruleset=${ruleset_link#"https://${loctempdomain}/${loctemprulesetpath}/"}
-            if [ ! -f /var/www/${rulesetpath}/${ruleset} ]
-            then
-                wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
-            fi
+            [ ! -f /var/www/${rulesetpath}/${ruleset} ] && wget -q -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
         done
     fi
 
@@ -885,7 +850,7 @@ chain_end() {
     manage_rule_sets
 
     systemctl reload sing-box.service
-    echo "Settings changed successfully"
+    echo "Settings changed successfully, this server is configured as the end of the chain or the only one"
     echo ""
     main_menu
 }
@@ -944,7 +909,7 @@ chain_middle() {
     manage_rule_sets
 
     systemctl reload sing-box.service
-    echo "Settings changed successfully"
+    echo "Settings changed successfully, this server is configured as intermediate in the chain"
     echo ""
     main_menu
 }
@@ -1282,29 +1247,13 @@ change_domain() {
 }
 
 disable_ipv6() {
-    if ! grep -q "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf
-    then
-        echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-    fi
-
-    if ! grep -q "net.ipv6.conf.default.disable_ipv6 = 1" /etc/sysctl.conf
-    then
-        echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-    fi
-
-    if ! grep -q "net.ipv6.conf.lo.disable_ipv6 = 1" /etc/sysctl.conf
-    then
-        echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-    fi
+    grep -q "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf || echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+    grep -q "net.ipv6.conf.default.disable_ipv6 = 1" /etc/sysctl.conf || echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+    grep -q "net.ipv6.conf.lo.disable_ipv6 = 1" /etc/sysctl.conf || echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 
     echo -e "${textcolor}IPv6 is disabled:${clear}"
     sysctl -p
-
-    if [[ -z $(crontab -l | grep "@reboot sysctl -p") ]]
-    then
-        { crontab -l; echo "@reboot sysctl -p"; } | crontab -
-    fi
-
+    [[ -z $(crontab -l | grep "@reboot sysctl -p") ]] && { crontab -l; echo "@reboot sysctl -p"; } | crontab -
     echo ""
     main_menu
 }
@@ -1316,12 +1265,7 @@ enable_ipv6() {
 
     echo -e "${textcolor}IPv6 is enabled:${clear}"
     sysctl -p
-
-    if [[ ! -z $(crontab -l | grep "@reboot sysctl -p") ]]
-    then
-        crontab -l | sed "/@reboot sysctl -p/d" | crontab -
-    fi
-
+    [[ -n $(crontab -l | grep "@reboot sysctl -p") ]] && crontab -l | sed "/@reboot sysctl -p/d" | crontab -
     echo ""
     main_menu
 }
@@ -1348,27 +1292,15 @@ show_paths() {
     sitedir=$(grep "/var/www/" /etc/nginx/nginx.conf | head -n 1)
     sitedir=${sitedir#*"/var/www/"}
     sitedir=${sitedir%";"*}
-    if [[ "$sitedir" =~ "/" ]]
-    then
-        sitedir=$(echo "${sitedir}" | cut -d "/" -f 1)
-    fi
-    if [ -d /var/www/${sitedir} ]
-    then
-        echo "Site directory                       /var/www/${sitedir}/"
-    fi
+    sitedir=$(echo "${sitedir}" | cut -d "/" -f 1)
+    [ -d /var/www/${sitedir} ] && echo "Site directory                       /var/www/${sitedir}/"
     echo ""
 
     echo -e "${textcolor}Certificates and accessory files:${clear}"
     echo "Certificate directory                /etc/letsencrypt/live/${domain}/"
-    if [ -f /etc/haproxy/certs/${domain}.pem ]
-    then
-        echo "Combined file with certificates      /etc/haproxy/certs/${domain}.pem"
-    fi
+    [ -f /etc/haproxy/certs/${domain}.pem ] && echo "Combined file with certificates      /etc/haproxy/certs/${domain}.pem"
     echo "Certificate renewal config           /etc/letsencrypt/renewal/${domain}.conf"
-    if [ -f /etc/letsencrypt/cloudflare.credentials ]
-    then
-        echo "File with Cloudflare API token/key   /etc/letsencrypt/cloudflare.credentials"
-    fi
+    [ -f /etc/letsencrypt/cloudflare.credentials ] && echo "File with Cloudflare API token/key   /etc/letsencrypt/cloudflare.credentials"
     echo ""
 
     echo -e "${textcolor}Scripts:${clear}"
@@ -1380,7 +1312,7 @@ show_paths() {
 }
 
 update_ssb() {
-    export version="1.3.1"
+    export version="1.3.2"
     export language="2"
     export -f get_ip
     export -f templates

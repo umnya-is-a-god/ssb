@@ -16,7 +16,7 @@ check_parent() {
 }
 
 check_update() {
-    new_version="1.3.1"
+    new_version="1.3.2"
 
     if [[ "${version}" == "${new_version}" ]]
     then
@@ -80,7 +80,7 @@ insert_values() {
         echo "$(jq "del(.inbounds[${inboundnumbertr}].transport.type) | del(.inbounds[${inboundnumbertr}].transport.path) | del(.inbounds[${inboundnumbervl}])" /etc/sing-box/config.json)" > /etc/sing-box/config.json
     fi
 
-    if [[ ! -z ${nextoutbound} ]]
+    if [[ -n ${nextoutbound} ]]
     then
         insert_chain
     fi
@@ -159,16 +159,8 @@ update_services() {
     systemctl stop sing-box.service
     systemctl stop warp-svc.service
     systemctl stop nginx.service
-
-    if [ -f /etc/haproxy/auth.lua ]
-    then
-        systemctl stop haproxy.service
-    fi
-
-    if [ -f /etc/apt/apt.conf.d/50unattended-upgrades ]
-    then
-        systemctl stop unattended-upgrades
-    fi
+    [ -f /etc/haproxy/auth.lua ] && systemctl stop haproxy.service
+    [ -f /etc/apt/apt.conf.d/50unattended-upgrades ] && systemctl stop unattended-upgrades
 
     extract_values
     cp /etc/sing-box/config.json /etc/sing-box/config.json.0
@@ -184,10 +176,7 @@ update_services() {
     do
         ruleset_link=$(jq -r ".route.rule_set[${i}].path" /etc/sing-box/config.json)
         ruleset=${ruleset_link#"/var/www/${rulesetpath}/"}
-        if [ ! -f ${ruleset_link} ]
-        then
-            wget -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
-        fi
+        [ ! -f ${ruleset_link} ] && wget -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
     done
 
     chmod -R 755 /var/www/${rulesetpath}
@@ -201,17 +190,8 @@ update_services() {
     systemctl start sing-box.service
     systemctl start warp-svc.service
     systemctl start nginx.service
-
-    if [ -f /etc/haproxy/auth.lua ]
-    then
-        systemctl start haproxy.service
-    fi
-
-    if [ -f /etc/apt/apt.conf.d/50unattended-upgrades ]
-    then
-        systemctl start unattended-upgrades
-    fi
-
+    [ -f /etc/haproxy/auth.lua ] && systemctl start haproxy.service
+    [ -f /etc/apt/apt.conf.d/50unattended-upgrades ] && systemctl start unattended-upgrades
     echo ""
 }
 
@@ -276,12 +256,7 @@ update_scripts() {
     wget -O /usr/local/bin/sbmanager https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/${sbmanager_file}
     wget -O /usr/local/bin/rsupdate https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/ruleset-update.sh
     chmod +x /usr/local/bin/sbmanager /usr/local/bin/rsupdate
-
-    if ! grep -q "alias ssb=" /etc/bash.bashrc
-    then
-        echo "alias ssb='/usr/local/bin/sbmanager'" >> /etc/bash.bashrc
-    fi
-
+    grep -q "alias ssb=" /etc/bash.bashrc || echo "alias ssb='/usr/local/bin/sbmanager'" >> /etc/bash.bashrc
     echo ""
 }
 
