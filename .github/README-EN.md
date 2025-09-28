@@ -5,7 +5,7 @@
 </div>
 
 ### Easy setup of a proxy with TLS termination on NGINX or HAProxy
-This script is designed to fully and quickly configure a secure proxy server with [Sing-Box](https://sing-box.sagernet.org) core and [NGINX](https://nginx.org/en/) or [HAProxy](https://www.haproxy.org) camouflage. To proxy traffic, **Trojan** and **VLESS** protocols are used. Two server setup options:
+This script is designed to fully and quickly configure a secure proxy server with [Sing-Box](https://sing-box.sagernet.org) core and [NGINX](https://nginx.org/en/) or [HAProxy](https://www.haproxy.org) frontend. To proxy traffic, **Trojan** and **VLESS** protocols are used. Two server setup options:
 
 - All requests to the proxy are received by NGINX, the requests are passed to Sing-Box only if they contain the correct path (WebSocket or HTTPUpgrade transport)
 
@@ -24,12 +24,12 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 > With routing rules for Russia. Open ports on the server: 443 and SSH.
 >
 > This project is created for educational and demonstration purposes. Please make sure that your actions are legal before using it.
- 
+
 ### Includes:
 1) Sing-Box server setup
 2) NGINX or HAProxy reverse proxy and website setup on port 443
 3) TLS certificates with auto renewal
-4) Security setup (optional)
+4) Security setup (SSH, UFW and unattended-upgrades) — optional
 5) Multiplexing to optimise connections and to solve TLS in TLS problem
 6) Enable BBR
 7) WARP setup
@@ -88,11 +88,11 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 >
 > On some devices, "stack": "system" in tun interface settings in client configs might not work. In such cases, it is recommended to replace it with "gvisor" by using option 4 in the settings menu (see above).
 
-[Android and iOS](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS, but it has similar settings.
+[Android, iOS and macOS](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS and macOS, but it has similar settings.
 
 [Windows](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/Sing-Box-Windows-en.md). This method includes setting up a pure Sing-Box core and does not have a GUI.
 
-[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions.
+[Linux](https://github.com/A-Zuro/Secret-Sing-Box/blob/main/.github/README-EN.md#client-setup). Run the command below and follow the instructions (for Debian-based distributions).
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux-en.sh)
 ```

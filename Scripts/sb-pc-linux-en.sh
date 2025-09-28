@@ -34,10 +34,7 @@ banner() {
 }
 
 install_sing_box() {
-	if [[ ! -f /usr/local/bin/proxylist ]]
-	then
-		touch /usr/local/bin/proxylist
-	fi
+	[[ ! -f /usr/local/bin/proxylist ]] && touch /usr/local/bin/proxylist
 
 	if [ $(sing-box version &> /dev/null; echo $?) -ne 0 ]
 	then
@@ -49,19 +46,27 @@ install_sing_box() {
 		exit_install
 
 		echo -e "${textcolor}Installing Sing-Box...${clear}"
+		[ ! -d /etc/apt/keyrings ] && mkdir /etc/apt/keyrings
 		curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc
 		chmod a+r /etc/apt/keyrings/sagernet.asc
 		echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/sagernet.asc] https://deb.sagernet.org/ * *" | tee /etc/apt/sources.list.d/sagernet.list > /dev/null
 		apt-get update -y
 		apt-get install sing-box -y
 		systemctl disable sing-box.service
+		echo ""
 
-		echo ""
-		echo -e "${textcolor}Sing-Box is installed${clear}"
-		echo ""
-		echo -e "It can be updated with ${textcolor}apt-get install sing-box -y${clear} command"
-		echo ""
-		main_menu
+		if [ $(sing-box version &> /dev/null; echo $?) -eq 0 ]
+		then
+			echo -e "${textcolor}Sing-Box is installed${clear}"
+			echo ""
+			echo -e "It can be updated with ${textcolor}apt-get install sing-box -y${clear} command"
+			echo ""
+			main_menu
+		else
+			echo -e "${red}Error: Sing-Box has not been installed${clear}"
+			echo ""
+			exit 1
+		fi
 	fi
 }
 
@@ -90,7 +95,7 @@ exit_del_proxy() {
 }
 
 check_link() {
-	while [[ -z $link ]] || [[ "$(curl -s -o /dev/null -w "%{http_code}" ${link})" != "200" ]]
+	while [[ -z $link ]] || [[ -z $(echo "$(curl -s ${link})" | grep '"tag": "proxy"') ]]
 	do
 		if [[ -z $link ]]
 		then
@@ -101,29 +106,28 @@ check_link() {
 		fi
 		echo -e "${textcolor}[?]${clear} Enter your client config link or enter ${textcolor}x${clear} to exit:"
 		read link
-		[[ ! -z $link ]] && echo ""
+		[[ -n $link ]] && echo ""
 		exit_add_proxy
 	done
 }
 
 check_command_add() {
-	while [[ -f /usr/local/bin/${newcomm} ]] || [[ $newcomm =~ " " ]] || [[ $newcomm =~ '$' ]] || [[ -z $newcomm ]]
+	while [[ $(which ${newcomm} &> /dev/null; echo $?) -eq 0 ]] || [[ -z $newcomm ]] || [[ ! $newcomm =~ ^[a-zA-Z0-9_-]+$ ]]
 	do
-		if [[ -f /usr/local/bin/${newcomm} ]]
+		if [[ $(which ${newcomm} &> /dev/null; echo $?) -eq 0 ]]
 		then
-			echo -e "${red}Error: this command already exists in /usr/local/bin${clear}"
-			echo ""
-		elif [[ $newcomm =~ " " ]] || [[ $newcomm =~ '$' ]]
-		then
-			echo -e "${red}Error: the command should not contain spaces and \$${clear}"
+			echo -e "${red}Error: this command already exists${clear}"
 			echo ""
 		elif [[ -z $newcomm ]]
 		then
 			:
+		else
+			echo -e "${red}Error: the command should contain only letters, numbers, _ and - symbols${clear}"
+			echo ""
 		fi
 		echo -e "${textcolor}[?]${clear} Enter the command for the new proxy:"
 		read newcomm
-		[[ ! -z $newcomm ]] && echo ""
+		[[ -n $newcomm ]] && echo ""
 	done
 }
 
@@ -134,12 +138,12 @@ check_command_del() {
 		then
 			:
 		else
-			echo -e "${red}Error: this command does not exist in /usr/local/bin${clear}"
+			echo -e "${red}Error: this command does not exist in /usr/local/bin/${clear}"
 			echo ""
 		fi
 		echo -e "${textcolor}[?]${clear} Enter the proxy command you want to delete or enter ${textcolor}x${clear} to exit:"
 		read delcomm
-		[[ ! -z $delcomm ]] && echo ""
+		[[ -n $delcomm ]] && echo ""
 		exit_del_proxy
 	done
 }
@@ -157,15 +161,14 @@ add_proxies() {
 	do
 		echo -e "${textcolor}[?]${clear} Enter your client config link or enter ${textcolor}x${clear} to exit:"
 		read link
-		[[ ! -z $link ]] && echo ""
+		[[ -n $link ]] && echo ""
 		exit_add_proxy
 		check_link
 		echo -e "${textcolor}[?]${clear} Enter the command for the new proxy:"
 		read newcomm
-		[[ ! -z $newcomm ]] && echo ""
+		[[ -n $newcomm ]] && echo ""
 		check_command_add
 
-		touch /usr/local/bin/${newcomm}
 		cat > /usr/local/bin/${newcomm} <<-EOF
 		#!/bin/bash
 		textcolor='\033[1;36m'
@@ -178,23 +181,18 @@ add_proxies() {
 		    echo ""
 		    exit 1
 		fi
-		wget -q -O /etc/sing-box/config.json ${link}
-		systemctl start sing-box.service
 		echo ""
 		echo -e "\${textcolor}Started Sing-Box\${clear}"
 		echo "Do not close this window while Sing-Box is running"
-		echo -e "Enter \${textcolor}x\${clear} to disconnect:"
-		while [[ \$run != "x" ]] && [[ \$run != "х" ]]
-		do
-		    read run
-		done
+		echo -e "Press \${textcolor}Ctrl + C\${clear} to disconnect"
 		echo ""
-		systemctl stop sing-box.service
+		wget -q -O /etc/sing-box/config-1.json ${link} && mv -f /etc/sing-box/config-1.json /etc/sing-box/config.json
+		sing-box run -c /etc/sing-box/config.json
 		EOF
+
 		chmod +x /usr/local/bin/${newcomm}
 		echo "#${newcomm}" >> /usr/local/bin/proxylist
-
-		echo -e "Command ${textcolor}${newcomm}${clear} has been added, use it to connect to the proxy"
+		echo -e "Command ${textcolor}${newcomm}${clear} has been added to /usr/local/bin/, use it to connect to the proxy"
 		echo ""
 	done
 
@@ -206,13 +204,13 @@ delete_proxies() {
 	do
 		echo -e "${textcolor}[?]${clear} Enter the proxy command you want to delete or enter ${textcolor}x${clear} to exit:"
 		read delcomm
-		[[ ! -z $delcomm ]] && echo ""
+		[[ -n $delcomm ]] && echo ""
 		exit_del_proxy
 		check_command_del
 
 		rm /usr/local/bin/${delcomm}
 		sed -i "/#$delcomm/d" /usr/local/bin/proxylist
-		echo -e "Command ${textcolor}${delcomm}${clear} has been deleted"
+		echo -e "Command ${textcolor}${delcomm}${clear} has been deleted from /usr/local/bin/"
 		echo ""
 	done
 

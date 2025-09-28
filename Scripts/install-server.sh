@@ -64,16 +64,8 @@ check_if_updated() {
 
 get_ip() {
     serverip=$(curl -s -4 https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
-
-    if [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
-    then
-        serverip=$(curl -s ipinfo.io/ip)
-    fi
-
-    if [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
-    then
-        serverip=$(curl -s 2ip.io)
-    fi
+    [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && serverip=$(curl -s ipinfo.io/ip)
+    [[ ! $serverip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && serverip=$(curl -s 2ip.io)
 }
 
 banner() {
@@ -143,11 +135,7 @@ crop_redirect_domain() {
 }
 
 edit_index() {
-    if [[ "$index" != "/"* ]]
-    then
-        index="/${index}"
-    fi
-
+    [[ "$index" != "/"* ]] && index="/${index}"
     index=${index%"/"}
 }
 
@@ -313,7 +301,7 @@ check_trjpass_ru() {
         echo ""
         echo -e "${textcolor}[?]${clear} Введите пароль для Trojan или оставьте пустым для генерации случайного пароля:"
         read trjpass
-        [[ ! -z $trjpass ]] && echo ""
+        [[ -n $trjpass ]] && echo ""
     done
 }
 
@@ -324,58 +312,58 @@ check_trjpass_en() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your password for Trojan or leave this empty to generate a random password:"
         read trjpass
-        [[ ! -z $trjpass ]] && echo ""
+        [[ -n $trjpass ]] && echo ""
     done
 }
 
 check_uuid_ru() {
-    while [[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] && [ ! -z "$uuid" ]
+    while [[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] && [ -n "$uuid" ]
     do
         echo -e "${red}Ошибка: введённое значение не является UUID${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Введите UUID для VLESS или оставьте пустым для генерации случайного UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
     done
 }
 
 check_uuid_en() {
-    while [[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] && [ ! -z "$uuid" ]
+    while [[ ! $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]] && [ -n "$uuid" ]
     do
         echo -e "${red}Error: this is not an UUID${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your UUID for VLESS or leave this empty to generate a random UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
     done
 }
 
 check_trojan_path_ru() {
-    while [[ ! $trojanpath =~ ^[a-zA-Z0-9_-]+$ ]] && [ ! -z "$trojanpath" ]
+    while [[ ! $trojanpath =~ ^[a-zA-Z0-9_-]+$ ]] && [ -n "$trojanpath" ]
     do
         echo -e "${red}Ошибка: путь должен содержать только английские буквы, цифры, символы _ и -${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Введите путь для Trojan или оставьте пустым для генерации случайного пути:"
         read trojanpath
-        [[ ! -z $trojanpath ]] && echo ""
+        [[ -n $trojanpath ]] && echo ""
         trojanpath=${trojanpath#"/"}
     done
 }
 
 check_trojan_path_en() {
-    while [[ ! $trojanpath =~ ^[a-zA-Z0-9_-]+$ ]] && [ ! -z "$trojanpath" ]
+    while [[ ! $trojanpath =~ ^[a-zA-Z0-9_-]+$ ]] && [ -n "$trojanpath" ]
     do
         echo -e "${red}Error: the path should contain only letters, numbers, _ and - symbols${clear}"
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your path for Trojan or leave this empty to generate a random path:"
         read trojanpath
-        [[ ! -z $trojanpath ]] && echo ""
+        [[ -n $trojanpath ]] && echo ""
         trojanpath=${trojanpath#"/"}
     done
 }
 
 check_vless_path_ru() {
-    while ([ "$trojanpath" = "$vlesspath" ] || [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$vlesspath" ]
+    while ([ "$trojanpath" = "$vlesspath" ] || [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$vlesspath" ]
     do
         if [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -386,13 +374,13 @@ check_vless_path_ru() {
         echo ""
         echo -e "${textcolor}[?]${clear} Введите путь для VLESS или оставьте пустым для генерации случайного пути:"
         read vlesspath
-        [[ ! -z $vlesspath ]] && echo ""
+        [[ -n $vlesspath ]] && echo ""
         vlesspath=${vlesspath#"/"}
     done
 }
 
 check_vless_path_en() {
-    while ([ "$trojanpath" = "$vlesspath" ] || [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$vlesspath" ]
+    while ([ "$trojanpath" = "$vlesspath" ] || [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$vlesspath" ]
     do
         if [[ ! $vlesspath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -403,13 +391,13 @@ check_vless_path_en() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your path for VLESS or leave this empty to generate a random path:"
         read vlesspath
-        [[ ! -z $vlesspath ]] && echo ""
+        [[ -n $vlesspath ]] && echo ""
         vlesspath=${vlesspath#"/"}
     done
 }
 
 check_subscription_path_ru() {
-    while ([ "$trojanpath" = "$subspath" ] || [ "$vlesspath" = "$subspath" ] || [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$subspath" ]
+    while ([ "$trojanpath" = "$subspath" ] || [ "$vlesspath" = "$subspath" ] || [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$subspath" ]
     do
         if [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -420,13 +408,13 @@ check_subscription_path_ru() {
         echo ""
         echo -e "${textcolor}[?]${clear} Введите путь для подписки или оставьте пустым для генерации случайного пути:"
         read subspath
-        [[ ! -z $subspath ]] && echo ""
+        [[ -n $subspath ]] && echo ""
         subspath=${subspath#"/"}
     done
 }
 
 check_subscription_path_en() {
-    while ([ "$trojanpath" = "$subspath" ] || [ "$vlesspath" = "$subspath" ] || [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$subspath" ]
+    while ([ "$trojanpath" = "$subspath" ] || [ "$vlesspath" = "$subspath" ] || [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$subspath" ]
     do
         if [[ ! $subspath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -437,13 +425,13 @@ check_subscription_path_en() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your subscription path or leave this empty to generate a random path:"
         read subspath
-        [[ ! -z $subspath ]] && echo ""
+        [[ -n $subspath ]] && echo ""
         subspath=${subspath#"/"}
     done
 }
 
 check_rulesetpath_ru() {
-    while ([ "$trojanpath" = "$rulesetpath" ] || [ "$vlesspath" = "$rulesetpath" ] || [ "$subspath" = "$rulesetpath" ] || [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$rulesetpath" ]
+    while ([ "$trojanpath" = "$rulesetpath" ] || [ "$vlesspath" = "$rulesetpath" ] || [ "$subspath" = "$rulesetpath" ] || [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$rulesetpath" ]
     do
         if [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -454,13 +442,13 @@ check_rulesetpath_ru() {
         echo ""
         echo -e "${textcolor}[?]${clear} Введите путь для наборов правил (rule sets) или оставьте пустым для генерации случайного пути:"
         read rulesetpath
-        [[ ! -z $rulesetpath ]] && echo ""
+        [[ -n $rulesetpath ]] && echo ""
         rulesetpath=${rulesetpath#"/"}
     done
 }
 
 check_rulesetpath_en() {
-    while ([ "$trojanpath" = "$rulesetpath" ] || [ "$vlesspath" = "$rulesetpath" ] || [ "$subspath" = "$rulesetpath" ] || [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ ! -z "$rulesetpath" ]
+    while ([ "$trojanpath" = "$rulesetpath" ] || [ "$vlesspath" = "$rulesetpath" ] || [ "$subspath" = "$rulesetpath" ] || [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]) && [ -n "$rulesetpath" ]
     do
         if [[ ! $rulesetpath =~ ^[a-zA-Z0-9_-]+$ ]]
         then
@@ -471,7 +459,7 @@ check_rulesetpath_en() {
         echo ""
         echo -e "${textcolor}[?]${clear} Enter your path for rule sets or leave this empty to generate a random path:"
         read rulesetpath
-        [[ ! -z $rulesetpath ]] && echo ""
+        [[ -n $rulesetpath ]] && echo ""
         rulesetpath=${rulesetpath#"/"}
     done
 }
@@ -816,38 +804,38 @@ enter_data_ru() {
     nginx_options
     echo -e "${textcolor}[?]${clear} Введите пароль для Trojan или оставьте пустым для генерации случайного пароля:"
     read trjpass
-    [[ ! -z $trjpass ]] && echo ""
+    [[ -n $trjpass ]] && echo ""
     check_trjpass_ru
     if [[ "${variant}" == "1" ]]
     then
         echo -e "${textcolor}[?]${clear} Введите путь для Trojan или оставьте пустым для генерации случайного пути:"
         read trojanpath
-        [[ ! -z $trojanpath ]] && echo ""
+        [[ -n $trojanpath ]] && echo ""
         trojanpath=${trojanpath#"/"}
         check_trojan_path_ru
         echo -e "${textcolor}[?]${clear} Введите UUID для VLESS или оставьте пустым для генерации случайного UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
         check_uuid_ru
         echo -e "${textcolor}[?]${clear} Введите путь для VLESS или оставьте пустым для генерации случайного пути:"
         read vlesspath
-        [[ ! -z $vlesspath ]] && echo ""
+        [[ -n $vlesspath ]] && echo ""
         vlesspath=${vlesspath#"/"}
         check_vless_path_ru
     fi
     echo -e "${textcolor}[?]${clear} Введите путь для подписки или оставьте пустым для генерации случайного пути:"
     read subspath
-    [[ ! -z $subspath ]] && echo ""
+    [[ -n $subspath ]] && echo ""
     subspath=${subspath#"/"}
     check_subscription_path_ru
     echo -e "${textcolor}[?]${clear} Введите путь для наборов правил (rule sets) или оставьте пустым для генерации случайного пути:"
     read rulesetpath
-    [[ ! -z $rulesetpath ]] && echo ""
+    [[ -n $rulesetpath ]] && echo ""
     rulesetpath=${rulesetpath#"/"}
     check_rulesetpath_ru
     echo -e "${textcolor}[?]${clear} Нужна ли настройка безопасности (SSH, UFW и unattended-upgrades)?"
-    echo "1 - Да (в случае нестандартных настроек у хостера или ошибки при вводе данных можно потерять доступ к серверу)"
-    echo "2 - Нет"
+    echo "1 - Да (в редких случаях при нестандартных настройках у хостера можно потерять доступ к серверу)"
+    echo "2 - Нет (тогда рекомендуется выполнить настройку самостоятельно после завершения работы скрипта)"
     read sshufw
     echo ""
     enter_ssh_data_ru
@@ -893,38 +881,38 @@ enter_data_en() {
     nginx_options
     echo -e "${textcolor}[?]${clear} Enter your password for Trojan or leave this empty to generate a random password:"
     read trjpass
-    [[ ! -z $trjpass ]] && echo ""
+    [[ -n $trjpass ]] && echo ""
     check_trjpass_en
     if [[ "${variant}" == "1" ]]
     then
         echo -e "${textcolor}[?]${clear} Enter your path for Trojan or leave this empty to generate a random path:"
         read trojanpath
-        [[ ! -z $trojanpath ]] && echo ""
+        [[ -n $trojanpath ]] && echo ""
         trojanpath=${trojanpath#"/"}
         check_trojan_path_en
         echo -e "${textcolor}[?]${clear} Enter your UUID for VLESS or leave this empty to generate a random UUID:"
         read uuid
-        [[ ! -z $uuid ]] && echo ""
+        [[ -n $uuid ]] && echo ""
         check_uuid_en
         echo -e "${textcolor}[?]${clear} Enter your path for VLESS or leave this empty to generate a random path:"
         read vlesspath
-        [[ ! -z $vlesspath ]] && echo ""
+        [[ -n $vlesspath ]] && echo ""
         vlesspath=${vlesspath#"/"}
         check_vless_path_en
     fi
     echo -e "${textcolor}[?]${clear} Enter your subscription path or leave this empty to generate a random path:"
     read subspath
-    [[ ! -z $subspath ]] && echo ""
+    [[ -n $subspath ]] && echo ""
     subspath=${subspath#"/"}
     check_subscription_path_en
     echo -e "${textcolor}[?]${clear} Enter your path for rule sets or leave this empty to generate a random path:"
     read rulesetpath
-    [[ ! -z $rulesetpath ]] && echo ""
+    [[ -n $rulesetpath ]] && echo ""
     rulesetpath=${rulesetpath#"/"}
     check_rulesetpath_en
     echo -e "${textcolor}[?]${clear} Do you need security setup (SSH, UFW and unattended-upgrades)?"
-    echo "1 - Yes (in case of hoster's non-standard settings or a mistake while entering data, access to the server might be lost)"
-    echo "2 - No"
+    echo "1 - Yes (in rare cases of hoster's non-standard settings, access to the server might be lost)"
+    echo "2 - No (then it is recommended to perform the setup manually after the script finishes running)"
     read sshufw
     echo ""
     enter_ssh_data_en
@@ -944,16 +932,8 @@ enter_data() {
 
 enable_bbr() {
     echo -e "${textcolor_light}Setting up BBR...${clear}"
-    if [[ ! "$(sysctl net.core.default_qdisc)" == *"= fq" ]]
-    then
-        echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
-    fi
-
-    if [[ ! "$(sysctl net.ipv4.tcp_congestion_control)" == *"bbr" ]]
-    then
-        echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
-    fi
-
+    [[ ! "$(sysctl net.core.default_qdisc)" == *"= fq" ]] && echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
+    [[ ! "$(sysctl net.ipv4.tcp_congestion_control)" == *"bbr" ]] && echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
     sysctl -p
     echo ""
 }
@@ -961,6 +941,7 @@ enable_bbr() {
 install_packages() {
     echo -e "${textcolor_light}Installing packages...${clear}"
     apt install sudo coreutils nano wget ufw certbot python3-certbot-dns-cloudflare cron gnupg2 ca-certificates lsb-release openssl sed jq net-tools htop -y
+    [[ "${sshufw}" != "2" ]] && apt install unattended-upgrades -y
 
     if grep -q "bullseye" /etc/os-release || grep -q "bookworm" /etc/os-release
     then
@@ -969,16 +950,7 @@ install_packages() {
         apt install ubuntu-keyring -y
     fi
 
-    if [[ "${sshufw}" != "2" ]]
-    then
-        apt install unattended-upgrades -y
-    fi
-
-    if [ ! -d /usr/share/keyrings ]
-    then
-        mkdir /usr/share/keyrings
-    fi
-
+    [ ! -d /usr/share/keyrings ] && mkdir /usr/share/keyrings
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(grep "VERSION_CODENAME=" /etc/os-release | cut -d "=" -f 2) main" | tee /etc/apt/sources.list.d/cloudflare-client.list
     apt-get update -y && apt-get install cloudflare-warp -y
@@ -986,11 +958,7 @@ install_packages() {
     #dpkg -i cloudflare-warp_2024.6.497-1_amd64.deb
     #apt-mark hold cloudflare-warp
 
-    if [ ! -d /etc/apt/keyrings ]
-    then
-        mkdir /etc/apt/keyrings
-    fi
-
+    [ ! -d /etc/apt/keyrings ] && mkdir /etc/apt/keyrings
     curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc
     chmod a+r /etc/apt/keyrings/sagernet.asc
     echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/sagernet.asc] https://deb.sagernet.org/ * *" | tee /etc/apt/sources.list.d/sagernet.list > /dev/null
@@ -1009,17 +977,9 @@ install_packages() {
     echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99nginx
     apt update -y
     apt install nginx -y
+    [ ! -d /var/www ] && mkdir /var/www
 
-    if [ ! -d /var/www ]
-    then
-        mkdir /var/www
-    fi
-
-    if [[ "${variant}" != "1" ]]
-    then
-        apt install haproxy -y
-    fi
-
+    [[ "${variant}" != "1" ]] && apt install haproxy -y
     echo ""
 }
 
@@ -1041,17 +1001,11 @@ setup_ssh() {
 
     if [[ "$username" == "root" ]]
     then
-        sed -i -e "s/.*Port .*/Port ${sshp}/g" -e "s/.*PermitRootLogin no.*/PermitRootLogin yes/g" -e "s/.*#PermitRootLogin.*/PermitRootLogin yes/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-        if [ ! -d /root/.ssh ]
-        then
-            mkdir /root/.ssh
-        fi
+        sed -i -e "s/.*Port .*/Port ${sshp}/g" -e "s/.*PermitRootLogin no.*/PermitRootLogin yes/g" -e "s/.*#PermitRootLogin .*/PermitRootLogin yes/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+        [ ! -d /root/.ssh ] && mkdir /root/.ssh
     else
-        sed -i -e "s/.*Port .*/Port ${sshp}/g" -e "s/.*PermitRootLogin yes.*/PermitRootLogin no/g" -e "s/.*#PermitRootLogin.*/PermitRootLogin no/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-        if [ ! -d /home/${username}/.ssh ]
-        then
-            mkdir /home/${username}/.ssh
-        fi
+        sed -i -e "s/.*Port .*/Port ${sshp}/g" -e "s/.*PermitRootLogin yes.*/PermitRootLogin no/g" -e "s/.*#PermitRootLogin .*/PermitRootLogin no/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+        [ ! -d /home/${username}/.ssh ] && mkdir /home/${username}/.ssh
         chown ${username}:sudo /home/${username}/.ssh
         chmod 700 /home/${username}/.ssh
     fi
@@ -1185,36 +1139,12 @@ setup_warp() {
 }
 
 generate_pass() {
-    if [ -z "$trjpass" ]
-    then
-        trjpass=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
-    if [ -z "$trojanpath" ] && [[ "${variant}" == "1" ]]
-    then
-        trojanpath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
-    if [ -z "$uuid" ] && [[ "${variant}" == "1" ]]
-    then
-        uuid=$(cat /proc/sys/kernel/random/uuid)
-    fi
-
-    if [ -z "$vlesspath" ] && [[ "${variant}" == "1" ]]
-    then
-        vlesspath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
-    if [ -z "$subspath" ]
-    then
-        subspath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
-    if [ -z "$rulesetpath" ]
-    then
-        rulesetpath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
-    fi
-
+    [ -z "$trjpass" ] && trjpass=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
+    [ -z "$trojanpath" ] && [[ "${variant}" == "1" ]] && trojanpath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
+    [ -z "$uuid" ] && [[ "${variant}" == "1" ]] && uuid=$(cat /proc/sys/kernel/random/uuid)
+    [ -z "$vlesspath" ] && [[ "${variant}" == "1" ]] && vlesspath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
+    [ -z "$subspath" ] && subspath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
+    [ -z "$rulesetpath" ] && rulesetpath=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 30)
     userkey=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 9)
 }
 
@@ -1238,10 +1168,7 @@ download_rule_sets() {
     do
         ruleset_link=$(jq -r ".route.rule_set[${i}].path" /etc/sing-box/config.json)
         ruleset=${ruleset_link#"/var/www/${rulesetpath}/"}
-        if [ ! -f ${ruleset_link} ]
-        then
-            wget -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
-        fi
+        [ ! -f ${ruleset_link} ] && wget -P /var/www/${rulesetpath} https://github.com/SagerNet/sing-geosite/raw/rule-set/${ruleset}
     done
 
     chmod -R 755 /var/www/${rulesetpath}
@@ -1470,7 +1397,6 @@ systemctl start sing-box.service
 
 client_config() {
 mkdir /var/www/${subspath}
-touch /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json
 
 cat > /var/www/${subspath}/1${userkey}-TRJ-CLIENT.json <<EOF
 {
@@ -2139,19 +2065,11 @@ for_nginx_options() {
     if [[ "$option" == "3" ]]
     then
         wget -P /var/www --mirror --convert-links --adjust-extension --page-requisites --no-parent https://${sitelink}
-
         mkdir ./testdir
         wget -q -P ./testdir https://${sitelink}
         index=$(ls ./testdir)
         rm -rf ./testdir
-
-        if [[ "$sitelink" =~ "/" ]]
-        then
-            sitedir=$(echo "${sitelink}" | cut -d "/" -f 1)
-        else
-            sitedir="${sitelink}"
-        fi
-
+        sitedir=$(echo "${sitelink}" | cut -d "/" -f 1)
         chmod -R 755 /var/www/${sitedir}
         filelist=$(find /var/www/${sitedir} -name ${index})
         slashnum=1000
@@ -2386,10 +2304,6 @@ http {
     }
 }
 EOF
-
-systemctl enable nginx
-nginx -t
-systemctl restart nginx
 }
 
 nginx_config_2() {
@@ -2471,21 +2385,22 @@ http {
     }
 }
 EOF
-
-systemctl enable nginx
-nginx -t
-systemctl restart nginx
 }
 
 setup_nginx() {
     echo -e "${textcolor_light}Setting up NGINX...${clear}"
     for_nginx_options
+
     if [[ "${variant}" == "1" ]]
     then
         nginx_config_1
     else
         nginx_config_2
     fi
+
+    systemctl enable nginx
+    nginx -t
+    systemctl restart nginx
     echo ""
 }
 
@@ -2600,10 +2515,6 @@ backend reject
 
 ${comment2}${comment3}userlist mycredentials
 EOF
-
-systemctl enable haproxy.service
-haproxy -f /etc/haproxy/haproxy.cfg -c
-systemctl restart haproxy.service
 }
 
 setup_haproxy() {
@@ -2612,6 +2523,9 @@ setup_haproxy() {
         echo -e "${textcolor_light}Setting up HAProxy...${clear}"
         auth_lua
         config_haproxy
+        systemctl enable haproxy.service
+        haproxy -f /etc/haproxy/haproxy.cfg -c
+        systemctl restart haproxy.service
         echo ""
     fi
 }
@@ -2653,7 +2567,7 @@ add_sub_page() {
 }
 
 final_message_ru() {
-    echo -e "${textcolor}Если выше не возникло ошибок, то настройка завершена!${clear}"
+    echo -e "${textcolor}Если выше не возникло ошибок, то настройка завершена! Сохраните текст внизу!${clear}"
     echo ""
     if [[ "${sshufw}" != "2" ]]
     then
@@ -2662,10 +2576,10 @@ final_message_ru() {
         echo -e "1) Отключиться от сервера ${textcolor}Ctrl + D${clear}"
         echo -e "2) Если нет ключей SSH, то сгенерировать их на своём ПК командой ${textcolor}ssh-keygen -t rsa -b 4096${clear}"
         echo "3) Отправить публичный ключ на сервер"
-        echo -e "   Команда для Linux: ${textcolor}ssh-copy-id -p ${sshp} ${username}@${serverip}${clear}"
+        echo -e "   Команда для Linux и macOS: ${textcolor}ssh-copy-id -p ${sshp} ${username}@${serverip}${clear}"
         echo -e "   Команда для Windows: ${textcolor}type \$env:USERPROFILE\.ssh\id_rsa.pub | ssh -p ${sshp} ${username}@${serverip} \"cat >> ~/.ssh/authorized_keys\"${clear}"
         echo -e "4) Подключиться к серверу ещё раз командой ${textcolor}ssh -p ${sshp} ${username}@${serverip}${clear}"
-        echo -e "5) Открыть конфиг sshd командой ${textcolor}sudo nano /etc/ssh/sshd_config${clear} и в PasswordAuthentication заменить yes на no"
+        echo -e "5) Отключить вход по паролю командой ${textcolor}sudo sed -i \"s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g\" /etc/ssh/sshd_config${clear}"
         echo -e "6) Перезапустить SSH командой ${textcolor}sudo systemctl restart ssh.service${clear}"
     else
         echo -e "${red}ВНИМАНИЕ!${clear}"
@@ -2706,7 +2620,7 @@ final_message_ru() {
 }
 
 final_message_en() {
-    echo -e "${textcolor}If there are no errors above then the setup is complete!${clear}"
+    echo -e "${textcolor}If there are no errors above then the setup is complete! Save the text below!${clear}"
     echo ""
     if [[ "${sshufw}" != "2" ]]
     then
@@ -2715,10 +2629,10 @@ final_message_en() {
         echo -e "1) Disconnect from the server by pressing ${textcolor}Ctrl + D${clear}"
         echo -e "2) If you don't have SSH keys then generate them on your PC (${textcolor}ssh-keygen -t rsa -b 4096${clear})"
         echo "3) Send the public key to the server"
-        echo -e "   Command for Linux: ${textcolor}ssh-copy-id -p ${sshp} ${username}@${serverip}${clear}"
+        echo -e "   Command for Linux and macOS: ${textcolor}ssh-copy-id -p ${sshp} ${username}@${serverip}${clear}"
         echo -e "   Command for Windows: ${textcolor}type \$env:USERPROFILE\.ssh\id_rsa.pub | ssh -p ${sshp} ${username}@${serverip} \"cat >> ~/.ssh/authorized_keys\"${clear}"
         echo -e "4) Connect to the server again (${textcolor}ssh -p ${sshp} ${username}@${serverip}${clear})"
-        echo -e "5) Open sshd config (${textcolor}sudo nano /etc/ssh/sshd_config${clear}) and change PasswordAuthentication value from yes to no"
+        echo -e "5) Disable password authentication (${textcolor}sudo sed -i \"s/.*PasswordAuthentication yes.*/PasswordAuthentication no/g\" /etc/ssh/sshd_config${clear})"
         echo -e "6) Restart SSH (${textcolor}sudo systemctl restart ssh.service${clear})"
     else
         echo -e "${red}ATTENTION!${clear}"
