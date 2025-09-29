@@ -1,4 +1,4 @@
-# Setting Up Sing-Box Client on Android and iOS
+# Setting Up Sing-Box Client on Android, iOS and macOS
 
 ### 1) Install Sing-Box:
 Android: https://play.google.com/store/apps/details?id=io.nekohasekai.sfa

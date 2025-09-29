@@ -2,9 +2,7 @@
 
 ### 1.1) Install Sing-Box (for Windows 10 and 11)
 
-Press Win + X and open the terminal with admin rights:
-
-![w1](https://github.com/user-attachments/assets/614a2643-df78-478c-ad5f-66bd2cfb7405)
+Press Win + X and select «Terminal (Admin)», «Command Prompt (Admin)» or «Windows PowerShell (Admin)».
 
 Then enter the command:
 
@@ -15,8 +13,6 @@ winget install sing-box
 You can close the terminal after the installation is complete (Sing-Box can also be updated with the same command).
 
 If you are getting an error telling that winget is absent, then follow the instructions below.
-
------
 
 ### 1.2) Install Sing-Box (for Windows versions without winget)
 
@@ -53,15 +49,11 @@ C:\actual\path\to\sing-box.exe run -c C:\1-sbconfig\client.json
 
 ### 3) Create a shortcut for this .cmd or .bat file
 
-Then change the settings of the shortcut to run it as admin:
-
-![w2](https://github.com/user-attachments/assets/18d9550a-0ba1-4331-b8b3-d80edd3a7362)
+Next, right-click on the shortcut and select «Properties», then go to the «Shortcut» tab:
 
 ![w3](https://github.com/user-attachments/assets/73f76c75-f891-49a9-9b95-dd659b145725)
 
-![w4](https://github.com/user-attachments/assets/bf8fa331-1442-4bcb-99e6-8748b5253e9a)
-
-Then press OK.
+Select «Advanced» and check the «Run as administrator» box, then click OK.
 
 -----
 

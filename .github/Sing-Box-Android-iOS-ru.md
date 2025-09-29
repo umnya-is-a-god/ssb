@@ -1,4 +1,4 @@
-# Настройка клиента Sing-Box на Android и iOS
+# Настройка клиента Sing-Box на Android, iOS и macOS
 
 ### 1) Установите Sing-Box:
 Android: https://play.google.com/store/apps/details?id=io.nekohasekai.sfa
@@ -32,7 +32,7 @@ iOS и macOS: https://apps.apple.com/us/app/sing-box-vt/id6673731168
 ### 4) Рекомендуется использовать прокси только для нужных приложений:
 ![a5](https://github.com/user-attachments/assets/585c748f-40d5-4ca9-8e1c-7f5b262cd4ce)
 
-Далее нажмите на 3 точки в правом верхнем углу, выберите Proxy Mode, после этого выберите Include.
+Далее нажмите на 3 точки в правом верхнем углу, выберите «Proxy Mode», после этого выберите «Include».
 
 Потом отметьте нужные приложения.
 
