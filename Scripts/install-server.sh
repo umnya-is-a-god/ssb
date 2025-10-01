@@ -6,7 +6,7 @@ red='\033[1;31m'
 clear='\033[0m'
 
 check_os() {
-    if ! grep -q "bullseye" /etc/os-release && ! grep -q "bookworm" /etc/os-release && ! grep -q "jammy" /etc/os-release && ! grep -q "noble" /etc/os-release
+    if ! grep -q -e "bullseye" -e "bookworm" -e "jammy" -e "noble" /etc/os-release
     then
         echo ""
         echo -e "${red}Error: only Debian 11/12 and Ubuntu 22.04/24.04 are supported${clear}"
@@ -943,11 +943,13 @@ install_packages() {
     apt install sudo coreutils nano wget ufw certbot python3-certbot-dns-cloudflare cron gnupg2 ca-certificates lsb-release openssl sed jq net-tools htop -y
     [[ "${sshufw}" != "2" ]] && apt install unattended-upgrades -y
 
-    if grep -q "bullseye" /etc/os-release || grep -q "bookworm" /etc/os-release
+    if grep -q -e "bullseye" -e "bookworm" /etc/os-release
     then
         apt install debian-archive-keyring -y
+        server_os="debian"
     else
         apt install ubuntu-keyring -y
+        server_os="ubuntu"
     fi
 
     [ ! -d /usr/share/keyrings ] && mkdir /usr/share/keyrings
@@ -968,12 +970,7 @@ install_packages() {
 
     curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
     gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
-    if grep -q "bullseye" /etc/os-release || grep -q "bookworm" /etc/os-release
-    then
-        echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list
-    else
-        echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list
-    fi
+    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/${server_os} `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list
     echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99nginx
     apt update -y
     apt install nginx -y
