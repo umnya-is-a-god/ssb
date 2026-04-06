@@ -32,14 +32,21 @@ echo Started Sing-Box
 echo Do not close this window while Sing-Box is running
 echo Press Ctrl + C to disconnect
 echo.
-if not exist "C:\1-sbconfig\" mkdir C:\1-sbconfig
-curl -s -o C:\1-sbconfig\client.json https://example.com/secret175subscr1pt10n/username-VLESS-CLIENT.json
+
+rem Directory where the config file will be stored (change if needed)
+set SINGBOXDIR=C:\1-sbconfig
+
+rem URL to download the client configuration (replace with your own)
+set URL=https://example.com/secret175subscr1pt10n/username-VLESS-CLIENT.json
+
+if not exist "%SINGBOXDIR%" mkdir "%SINGBOXDIR%"
+curl -s -o "%SINGBOXDIR%\client.json" "%URL%"
 set ENABLE_DEPRECATED_LEGACY_DNS_SERVERS=true
 set ENABLE_DEPRECATED_MISSING_DOMAIN_RESOLVER=true
-sing-box run -c C:\1-sbconfig\client.json
+sing-box run -c "%SINGBOXDIR%\client.json"
 ```
 
-Change the link in the 7th line to yours.
+Change the link in the 11th line to yours.
 
 For Windows versions without winget replace the last line like this and replace the path to sing-box.exe to your actual path:
 
