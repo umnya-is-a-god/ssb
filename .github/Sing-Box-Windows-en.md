@@ -46,7 +46,7 @@ set ENABLE_DEPRECATED_MISSING_DOMAIN_RESOLVER=true
 sing-box run -c "%SINGBOXDIR%\client.json"
 ```
 
-Change the link in the 11 line to yours.
+Change the link in the 11th line to yours.
 
 For Windows versions without winget replace the last line like this and replace the path to sing-box.exe to your actual path:
 
