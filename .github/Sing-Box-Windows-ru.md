@@ -34,7 +34,8 @@ curl -s -o "%SING_BOX_DIR%\client.json" "%URL%"
 "%SING_BOX_DIR%\sing-box.exe" run -c "%SING_BOX_DIR%\client.json" --disable-color
 ```
 
-Ссылку в 6-ой строчке замените на свою.
+> [!IMPORTANT]
+> Ссылку в 6-ой строчке замените на свою.
 
 -----
 
