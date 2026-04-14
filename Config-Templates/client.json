@@ -42,6 +42,9 @@
           "max-service.exe",
           "crashpad_handler.exe"
         ],
+        "server": "dns-local"
+      },
+      {
         "rule_set": [
           "torrent-clients"
         ],
@@ -234,6 +237,9 @@
           "max-service.exe",
           "crashpad_handler.exe"
         ],
+        "outbound": "direct"
+      },
+      {
         "rule_set": [
           "torrent-clients"
         ],

@@ -1307,6 +1307,9 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "max-service.exe",
           "crashpad_handler.exe"
         ],
+        "server": "dns-local"
+      },
+      {
         "rule_set": [
           "torrent-clients"
         ],
@@ -1499,6 +1502,9 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "max-service.exe",
           "crashpad_handler.exe"
         ],
+        "outbound": "direct"
+      },
+      {
         "rule_set": [
           "torrent-clients"
         ],
