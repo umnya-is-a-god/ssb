@@ -132,10 +132,8 @@
           "twitch",
           "tumblr",
           "pinterest",
-          "deviantart",
           "duckduckgo",
           "yahoo",
-          "mozilla",
           "oracle",
           "blender",
           "drweb",
@@ -146,7 +144,6 @@
           "springer",
           "elsevier",
           "sciencedirect",
-          "clarivate",
           "sci-hub",
           "duolingo"
         ],
@@ -327,10 +324,8 @@
           "twitch",
           "tumblr",
           "pinterest",
-          "deviantart",
           "duckduckgo",
           "yahoo",
-          "mozilla",
           "oracle",
           "blender",
           "drweb",
@@ -341,7 +336,6 @@
           "springer",
           "elsevier",
           "sciencedirect",
-          "clarivate",
           "sci-hub",
           "duolingo"
         ],
@@ -444,22 +438,10 @@
         "url": "https://DOMAIN/RULESETPATH/geosite-tumblr.srs"
       },
       {
-        "tag": "4chan",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://DOMAIN/RULESETPATH/geosite-4chan.srs"
-      },
-      {
         "tag": "pinterest",
         "type": "remote",
         "format": "binary",
         "url": "https://DOMAIN/RULESETPATH/geosite-pinterest.srs"
-      },
-      {
-        "tag": "deviantart",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://DOMAIN/RULESETPATH/geosite-deviantart.srs"
       },
       {
         "tag": "duckduckgo",
@@ -472,12 +454,6 @@
         "type": "remote",
         "format": "binary",
         "url": "https://DOMAIN/RULESETPATH/geosite-yahoo.srs"
-      },
-      {
-        "tag": "mozilla",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://DOMAIN/RULESETPATH/geosite-mozilla.srs"
       },
       {
         "tag": "oracle",
@@ -538,12 +514,6 @@
         "type": "remote",
         "format": "binary",
         "url": "https://DOMAIN/RULESETPATH/geosite-sciencedirect.srs"
-      },
-      {
-        "tag": "clarivate",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://DOMAIN/RULESETPATH/geosite-clarivate.srs"
       },
       {
         "tag": "sci-hub",

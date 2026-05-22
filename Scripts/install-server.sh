@@ -1397,10 +1397,8 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "twitch",
           "tumblr",
           "pinterest",
-          "deviantart",
           "duckduckgo",
           "yahoo",
-          "mozilla",
           "oracle",
           "blender",
           "drweb",
@@ -1411,7 +1409,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "springer",
           "elsevier",
           "sciencedirect",
-          "clarivate",
           "sci-hub",
           "duolingo"
         ],
@@ -1592,10 +1589,8 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "twitch",
           "tumblr",
           "pinterest",
-          "deviantart",
           "duckduckgo",
           "yahoo",
-          "mozilla",
           "oracle",
           "blender",
           "drweb",
@@ -1606,7 +1601,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "springer",
           "elsevier",
           "sciencedirect",
-          "clarivate",
           "sci-hub",
           "duolingo"
         ],
@@ -1709,22 +1703,10 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
         "url": "https://${domain}/${rulesetpath}/geosite-tumblr.srs"
       },
       {
-        "tag": "4chan",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://${domain}/${rulesetpath}/geosite-4chan.srs"
-      },
-      {
         "tag": "pinterest",
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-pinterest.srs"
-      },
-      {
-        "tag": "deviantart",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://${domain}/${rulesetpath}/geosite-deviantart.srs"
       },
       {
         "tag": "duckduckgo",
@@ -1737,12 +1719,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-yahoo.srs"
-      },
-      {
-        "tag": "mozilla",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://${domain}/${rulesetpath}/geosite-mozilla.srs"
       },
       {
         "tag": "oracle",
@@ -1803,12 +1779,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
         "type": "remote",
         "format": "binary",
         "url": "https://${domain}/${rulesetpath}/geosite-sciencedirect.srs"
-      },
-      {
-        "tag": "clarivate",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://${domain}/${rulesetpath}/geosite-clarivate.srs"
       },
       {
         "tag": "sci-hub",
