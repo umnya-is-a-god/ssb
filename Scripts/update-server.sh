@@ -25,7 +25,7 @@ check_update() {
     info_message[3_en]="New version is available:"
 
     [[ ! $language =~ ^[a-z]+$ ]] && language="ru"   # Legacy
-    new_version="1.4.8"
+    new_version="1.4.9"
 
     if [[ "$version" == "$new_version" ]]
     then
@@ -176,10 +176,10 @@ update_services() {
         insert_values
     fi
 
-    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
     curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc && chmod a+r /etc/apt/keyrings/sagernet.asc
     curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg > /dev/null
-    gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg /etc/apt/keyrings/sagernet.asc /usr/share/keyrings/nginx-archive-keyring.gpg
+    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+    gpg --dry-run --quiet --no-keyring --import --import-options import-show /etc/apt/keyrings/sagernet.asc /usr/share/keyrings/nginx-archive-keyring.gpg /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 
     apt-mark unhold sing-box
     apt update -y && apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" full-upgrade -y

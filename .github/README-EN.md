@@ -18,7 +18,7 @@ This script is designed to fully and quickly configure a secure proxy server wit
 Both setup methods make it impossible to detect Sing-Box from the outside, which improves security.
 
 > [!IMPORTANT]
-> Supported OS for the server: Debian 11/12/13 or Ubuntu 22.04/24.04. Just 512 MB of RAM, 5 GB of disk space and 1 processor core are sufficient. You will also need an IPv4 on the server and your own domain/subdomain ([How to set it up?](cf-settings-en.md)). Run as root on a newly installed system. It's necessary to update and reboot the system before running this script.
+> Supported OS for the server: Debian 11/12/13 or Ubuntu 22.04/24.04/26.04. Just 512 MB of RAM, 5 GB of disk space and 1 processor core are sufficient. You will also need an IPv4 on the server and your own domain/subdomain ([How to set it up?](cf-settings-en.md)). Run as root on a newly installed system. It's necessary to update and reboot the system before running this script.
 
 > [!NOTE]
 > With routing rules for Russia. Open ports on the server: 443 and SSH.
@@ -35,7 +35,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 7) WARP setup
 8) Optional setup of proxy chains of two or more servers
 9) An option to setup connection to custom Cloudflare IP on the client
-10) Client Sing-Box configs (v1.11.0–1.13.X) with routing rules for Russia
+10) Client Sing-Box configs (v1.11.0–1.13.x) with routing rules for Russia
 11) Automated management of user config files
 12) Page for convenient distribution of subscriptions ([example](https://a-zuro.github.io/Secret-Sing-Box/sub.html#en))
 

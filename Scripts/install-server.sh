@@ -6,7 +6,7 @@ red='\033[1;31m'
 clear='\033[0m'
 
 check_os() {
-    if ! grep -q -e "bullseye" -e "bookworm" -e "trixie" -e "jammy" -e "noble" /etc/os-release
+    if ! grep -q -e "bullseye" -e "bookworm" -e "trixie" -e "jammy" -e "noble" -e "resolute" /etc/os-release
     then
         echo ""
         echo -e "${red}Error: only Debian 11/12/13 and Ubuntu 22.04/24.04 are supported${clear}"
@@ -451,7 +451,7 @@ check_index_path() {
 }
 
 nginx_login() {
-    comment_1="#"; comment_2=""; comment_3=""
+    comment_1="# "; comment_2=""; comment_3=""
     redirect="example.com"   # Dummy, will be commented
     site_dir="html"
     index="index.html index.htm"
@@ -462,7 +462,7 @@ nginx_redirect() {
     input_message[1_ru]="${textcolor}[?]${clear} Введите домен, на который будет идти перенаправление:"
     input_message[1_en]="${textcolor}[?]${clear} Enter the domain to which requests will be redirected:"
 
-    comment_1=""; comment_2="#"; comment_3=""
+    comment_1=""; comment_2="# "; comment_3=""
     site_dir="html"
     index="index.html index.htm"
 
@@ -474,7 +474,7 @@ nginx_redirect() {
 }
 
 nginx_copy_site() {
-    comment_1=""; comment_2=""; comment_3="#"
+    comment_1=""; comment_2=""; comment_3="# "
     redirect="example.com"   # Dummy, will be commented
 
     nginx_copy_site_text_ru() {
@@ -505,7 +505,7 @@ nginx_copy_site() {
 }
 
 nginx_site() {
-    comment_1=""; comment_2=""; comment_3="#"
+    comment_1=""; comment_2=""; comment_3="# "
     redirect="example.com"   # Dummy, will be commented
 
     nginx_site_text_ru() {
@@ -796,28 +796,13 @@ enable_bbr() {
     echo ""
 }
 
-downgrade_nasty_warp() {
-    # Because some WARP releases are buggy...
-    warp_version="2026.3.846.0"
-    proc_arch="amd64"
-    [[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && proc_arch="arm64"
-    wget -q -P /tmp https://pkg.cloudflareclient.com/pool/${os_codename}/main/c/cloudflare-warp/cloudflare-warp_${warp_version}_${proc_arch}.deb
-
-    if [[ $? -eq 0 ]]
-    then
-        apt install /tmp/cloudflare-warp_${warp_version}_${proc_arch}.deb -y
-        rm -f /tmp/cloudflare-warp_${warp_version}_${proc_arch}.deb
-        apt-mark hold cloudflare-warp
-    fi
-}
-
 install_packages() {
     declare -A -g info_message=()
     info_message[1_ru]="${textcolor_light}Установка необходимых пакетов...${clear}"
     info_message[1_en]="${textcolor_light}Installing the required packages...${clear}"
 
     echo -e "${info_message[1_$language]}"
-    apt install sudo coreutils nano wget ufw certbot python3-certbot-dns-cloudflare cron gnupg2 ca-certificates openssl sed jq net-tools htop -y
+    apt install sudo coreutils nano whiptail wget ufw certbot python3-certbot-dns-cloudflare cron gnupg2 ca-certificates openssl sed jq net-tools htop -y
     [[ "$ssh_ufw" != "2" ]] && apt install unattended-upgrades -y
     [[ ! -d /root/.gnupg ]] && mkdir -m 700 /root/.gnupg
     os_codename=$(grep "VERSION_CODENAME=" /etc/os-release | cut -d "=" -f 2)
@@ -831,13 +816,6 @@ install_packages() {
         server_os="ubuntu"
     fi
 
-    [[ ! -d /usr/share/keyrings ]] && mkdir -p /usr/share/keyrings
-    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-    gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-    echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ ${os_codename} main" | tee /etc/apt/sources.list.d/cloudflare-client.list
-    #apt-get update -y && apt-get install cloudflare-warp -y
-    downgrade_nasty_warp
-
     [[ ! -d /etc/apt/keyrings ]] && mkdir -p /etc/apt/keyrings
     curl -fsSL https://sing-box.app/gpg.key -o /etc/apt/keyrings/sagernet.asc && chmod a+r /etc/apt/keyrings/sagernet.asc
     gpg --dry-run --quiet --no-keyring --import --import-options import-show /etc/apt/keyrings/sagernet.asc
@@ -845,16 +823,39 @@ install_packages() {
     apt-get update -y && apt-get install sing-box -y
     apt-mark hold sing-box
 
+    [[ ! -d /var/www ]] && mkdir -p /var/www
+    [[ ! -d /usr/share/keyrings ]] && mkdir -p /usr/share/keyrings
     curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg > /dev/null
     gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
     echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/${server_os} ${os_codename} nginx" | tee /etc/apt/sources.list.d/nginx.list
     echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99nginx
     apt update -y && apt install nginx -y
-    [[ ! -d /var/www ]] && mkdir -p /var/www
+
+    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+    gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ ${os_codename} main" | tee /etc/apt/sources.list.d/cloudflare-client.list
+    #apt-get update -y && apt-get install cloudflare-warp -y
+    downgrade_nasty_warp
 
     [[ "$variant" != "1" ]] && apt install haproxy -y
     apt autoremove -y; apt autoclean -y
     echo ""
+}
+
+downgrade_nasty_warp() {
+    # Because some WARP releases are buggy...
+    warp_version="2026.3.846.0"
+    proc_arch="amd64"
+    [[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]] && proc_arch="arm64"
+    [[ "$os_codename" == "resolute" ]] && os_codename="noble"
+    wget -q -P /tmp https://pkg.cloudflareclient.com/pool/${os_codename}/main/c/cloudflare-warp/cloudflare-warp_${warp_version}_${proc_arch}.deb
+
+    if [[ $? -eq 0 ]]
+    then
+        apt install /tmp/cloudflare-warp_${warp_version}_${proc_arch}.deb -y
+        rm -f /tmp/cloudflare-warp_${warp_version}_${proc_arch}.deb
+        apt-mark hold cloudflare-warp
+    fi
 }
 
 create_user() {
@@ -877,24 +878,24 @@ setup_ssh() {
     info_message[1_ru]="${textcolor_light}Изменение настроек SSH...${clear}"
     info_message[1_en]="${textcolor_light}Changing SSH settings...${clear}"
 
+    echo -e "${info_message[1_$language]}"
+
     if [[ "$username" == "root" ]]
     then
-        [[ $ssh_port -ne 22 ]] && echo -e "${info_message[1_$language]}"
         sed -i -e "s/.*Port .*/Port ${ssh_port}/g" -e "s/.*PermitRootLogin no.*/PermitRootLogin yes/g" -e "s/.*#PermitRootLogin .*/PermitRootLogin yes/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
         [[ ! -d /root/.ssh ]] && mkdir -p /root/.ssh
     else
-        echo -e "${info_message[1_$language]}"
         sed -i -e "s/.*Port .*/Port ${ssh_port}/g" -e "s/.*PermitRootLogin yes.*/PermitRootLogin no/g" -e "s/.*#PermitRootLogin .*/PermitRootLogin no/g" -e "s/.*PasswordAuthentication no.*/PasswordAuthentication yes/g" -e "s/.*#PasswordAuthentication .*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
         [[ ! -d /home/${username}/.ssh ]] && mkdir -p /home/${username}/.ssh
         chown ${username}:sudo /home/${username}/.ssh
         chmod 700 /home/${username}/.ssh
     fi
 
-    if grep -q "noble" /etc/os-release
+    if grep -q -e "noble" -e "resolute" /etc/os-release
     then
-        sed -i "s/.*ListenStream.*/ListenStream=${ssh_port}/g" /lib/systemd/system/ssh.socket
-        systemctl daemon-reload
-        systemctl restart ssh.socket
+        systemctl disable --now ssh.socket
+        systemctl mask ssh.socket
+        systemctl enable --now ssh.service
     fi
 
     grep -q "PasswordAuthentication yes" /etc/ssh/sshd_config.d/50-cloud-init.conf &> /dev/null && rm -f /etc/ssh/sshd_config.d/50-cloud-init.conf
@@ -2223,6 +2224,7 @@ global
         # log /dev/log local0
         # log /dev/log local1 notice
         log /dev/log local2 warning
+        ${comment_0}tune.lua.bool-sample-conversion normal
         lua-load /etc/haproxy/auth.lua
         chroot /var/lib/haproxy
         stats socket /run/haproxy/admin.sock mode 660 level admin
@@ -2310,6 +2312,8 @@ setup_haproxy() {
 
         mkdir -p /etc/haproxy/certs
         cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > /etc/haproxy/certs/${domain}.pem
+        haproxy_ver=$(haproxy -v | head -n 1 | cut -d " " -f 3)
+        [[ $(echo -e "${haproxy_ver}\n3.2" | sort -V | head -n 1) != "3.2" ]] && comment_0="# "
         haproxy_config
 
         systemctl enable haproxy.service
