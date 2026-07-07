@@ -4,6 +4,7 @@
 > This guideline shows how to set up a domain using Cloudflare as an example, but you can also use other services.
 
 ### General settings
+
 First, you need to add your domain to your [Cloudflare account](https://dash.cloudflare.com) and specify Cloudflare NS servers at your domain registrar.
 
 Next, change the following settings in your Cloudflare account: 
@@ -12,6 +13,7 @@ Next, change the following settings in your Cloudflare account:
 3) SSL/TLS > Edge Certificates > TLS 1.3 > Enable
 
 ### DNS Settings
+
 Example of DNS records:
 
 ![dns](https://github.com/user-attachments/assets/bb128eaf-1930-4754-97aa-347cdf68e229)
@@ -26,6 +28,7 @@ For the setup option with TLS termination on NGINX and WebSocket or HTTPUpgrade 
 > Instead of «sub», specify your subdomain and enter it in the script instead of your domain (e. g. sub.example.com).
 
 ### Getting Cloudflare API token
+
 In your Cloudflare account, select Overview > Get your API token > Create Token > Edit zone DNS (Use template).
 
 Then specify the following settings:

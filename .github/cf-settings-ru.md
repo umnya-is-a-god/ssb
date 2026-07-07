@@ -4,6 +4,7 @@
 > Здесь показана настройка домена на примере Cloudflare, но можно также использовать другие сервисы.
 
 ### Общие настройки
+
 Для начала нужно добавить домен в [аккаунт Cloudflare](https://dash.cloudflare.com) и указать NS-сервера Cloudflare у вашего регистратора доменов.
 
 Далее выполнить следующие настройки в аккаунте Cloudflare: 
@@ -12,6 +13,7 @@
 3) SSL/TLS > Edge Certificates > TLS 1.3 > Включить
 
 ### Настройки DNS
+
 Пример DNS записей:
 
 ![dns-2](https://github.com/user-attachments/assets/bb128eaf-1930-4754-97aa-347cdf68e229)
@@ -26,6 +28,7 @@
 > Вместо «sub» придумайте свой поддомен, и в скрипте введите его вместо домена (например, sub.example.com).
 
 ### Получение API токена Cloudflare
+
 В аккаунте Cloudflare выберите Overview > Get your API token > Create Token > Edit zone DNS (Use template).
 
 Далее нужно указать следующие настройки:

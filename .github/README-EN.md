@@ -5,6 +5,7 @@
 </div>
 
 ### Easy setup of a proxy with TLS termination on NGINX or HAProxy
+
 This script is designed to fully and quickly configure a secure proxy server with [Sing-Box](https://sing-box.sagernet.org) core and [NGINX](https://nginx.org/en/) or [HAProxy](https://www.haproxy.org) frontend. To proxy traffic, **Trojan** and **VLESS** protocols are used. Two server setup options:
 
 - All requests to the proxy are received by NGINX, the requests are passed to Sing-Box only if they contain the correct path (WebSocket or HTTPUpgrade transport)
@@ -26,6 +27,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 > This project is created for educational and demonstration purposes. Please make sure that your actions are legal before using it.
 
 ### Includes:
+
 1) Sing-Box server setup (config for v1.12.0+)
 2) NGINX or HAProxy reverse proxy and website setup on port 443
 3) TLS certificates with auto renewal
@@ -39,7 +41,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 11) Automated management of user config files
 12) Page for convenient distribution of subscriptions ([example](https://a-zuro.github.io/Secret-Sing-Box/sub.html#en))
 
-### Server setup:
+### Server setup
 
 To setup the server, run this command on it:
 
@@ -56,7 +58,7 @@ Then just enter the necessary information:
 
 In the end, the script will show your links to client configs and to subscription page, it's recommended to save them.
 
------
+### Additional settings menu
 
 To display the settings menu, run this command:
 
@@ -74,7 +76,7 @@ Option 5 synchronizes the settings in client configs of all users, which elimina
 
 5.2. Synchronizes settings with the local template, allows to set custom rules in client configs. If new rule sets are added to the configs by using this option, they will be automatically downloaded on the server if they are from [SagerNet](https://github.com/SagerNet/sing-geosite/tree/rule-set).
 
-### WARP+ keys:
+### WARP+ keys
 
 To activate a WARP+ key, enter this command (replace the key with yours):
 
@@ -82,7 +84,8 @@ To activate a WARP+ key, enter this command (replace the key with yours):
 warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 ```
 
-### Client setup:
+### Client setup
+
 > [!IMPORTANT]
 > It is recommended to use Sing-Box app due to more complete routing settings, but you can also import the link to [Hiddify](https://github.com/hiddify/hiddify-app/releases/latest) app or use any client app based on Sing-Box or Clash/Mihomo cores.
 >
