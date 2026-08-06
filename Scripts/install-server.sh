@@ -320,7 +320,7 @@ check_ssh_port() {
     check_message[3_en]="${red}Error: the ports 80, 443, 10443, 11443 and 40000 will be taken${clear}"
     check_message[4_en]="${textcolor}[?]${clear} Enter new SSH port number or 22 (number above 1024 is recommended):"
 
-    while [[ ! $ssh_port =~ ^[1-9][0-9]*$ ]] || [[ $ssh_port -gt 65535 ]] || [[ $ssh_port -eq 80 ]] || [[ $ssh_port -eq 443 ]] || [[ $ssh_port -eq 10443 ]] || [[ $ssh_port -eq 11443 ]] || [[ $ssh_port -eq 40000 ]]
+    while [[ ! $ssh_port =~ ^[1-9][0-9]*$ ]] || [[ $ssh_port -gt 65535 ]] || [[ $ssh_port =~ ^(80|443|10443|11443|40000)$ ]]
     do
         if [[ -z $ssh_port ]]
         then
