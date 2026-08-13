@@ -61,9 +61,9 @@ templates() {
 }
 
 get_ip() {
-    server_ip=$(curl -s https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
-    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s ipinfo.io/ip)
-    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s 2ip.io)
+    server_ip=$(curl -s4 https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
+    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s4 ipinfo.io/ip)
+    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s4 2ip.io)
 }
 
 get_data() {

@@ -30,7 +30,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 
 1) Sing-Box server setup (config for v1.12.0+)
 2) NGINX or HAProxy reverse proxy and website setup on port 443
-3) TLS certificates with auto renewal
+3) TLS certificates from Let's Encrypt with auto renewal
 4) Security setup (SSH, UFW and unattended-upgrades) — optional
 5) Multiplexing to optimise connections and to solve TLS in TLS problem
 6) Enable BBR

@@ -121,9 +121,9 @@ update_and_reboot() {
 
 get_ip() {
     grep -q '^precedence \+::ffff:0:0/96 ' /etc/gai.conf &> /dev/null || echo "precedence ::ffff:0:0/96 100" >> /etc/gai.conf
-    server_ip=$(curl -s https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
-    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s ipinfo.io/ip)
-    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s 2ip.io)
+    server_ip=$(curl -s4 https://cloudflare.com/cdn-cgi/trace | grep "ip" | cut -d "=" -f 2)
+    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s4 ipinfo.io/ip)
+    [[ ! $server_ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] && server_ip=$(curl -s4 2ip.io)
 }
 
 crop_domain() {
