@@ -101,7 +101,3 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux.sh); source ~/.bashrc
 ```
-
------
-
-[![Star History Chart](https://api.star-history.com/chart?repos=A-Zuro/Secret-Sing-Box&type=date&legend=top-left&sealed_token=sQauAuEjnPCA89e45xm2r7aRE8N2PvH3R2HzKqRjEDUGMGveq7JuR-lPxMHNGyK7BjHVP-D-LtPHewOENBQL3K4tT1cuMImttBhpoDa98jddWdOkMMPF6fNJ83YhP7ZDVGGsMoY6Hf3_1ifF0uejN_7VbILxZHF5GBAbgiCOHLf-y_U4-qZjouq8Opyj)](https://www.star-history.com/?repos=A-Zuro%2FSecret-Sing-Box&type=date&legend=top-left)
