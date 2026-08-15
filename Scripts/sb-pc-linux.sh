@@ -133,7 +133,7 @@ check_command_add() {
     check_message[2_en]="${red}Error: this command already exists${clear}"
     check_message[3_en]="${textcolor}[?]${clear} Enter the command for the new proxy:"
 
-    while [[ ! $new_comm =~ ^[a-zA-Z0-9_-]+$ ]] || which ${new_comm} &> /dev/null
+    while [[ ! $new_comm =~ ^[a-zA-Z0-9_-]+$ ]] || type ${new_comm} &> /dev/null
     do
         if [[ -z $new_comm ]]
         then
