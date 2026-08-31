@@ -37,7 +37,7 @@ Both setup methods make it impossible to detect Sing-Box from the outside, which
 7) WARP setup
 8) Optional setup of proxy chains of two or more servers
 9) An option to setup connection to custom Cloudflare IP on the client
-10) Client Sing-Box configs (v1.11.0–1.13.x) with routing rules for Russia
+10) Client Sing-Box configs (v1.14.0+) with routing rules for Russia
 11) Automated management of user config files
 12) Page for convenient distribution of subscriptions ([example](https://a-zuro.github.io/Secret-Sing-Box/sub.html#en))
 

@@ -1177,12 +1177,12 @@ cat > /etc/sing-box/config.json <<EOF
           ".su",
           ".ru.com",
           ".ru.net",
-          "habr.com",
           "ntc.party",
           "canva.com"
         ],
         "domain_keyword": [
           "xn--",
+          "habr",
           "rutracker"
         ],
         "rule_set": [
@@ -1272,18 +1272,15 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
   "dns": {
     "servers": [
       {
+        "type": "tls",
         "tag": "dns-remote",
-        "address": "tls://1.1.1.1",
+        "server": "1.1.1.1",
         "detour": "proxy"
       },
       {
+        "type": "udp",
         "tag": "dns-local",
-        "address": "195.208.4.1",
-        "strategy": "ipv4_only"
-      },
-      {
-        "tag": "dns-block",
-        "address": "rcode://success"
+        "server": "195.208.4.1"
       }
     ],
     "rules": [
@@ -1291,8 +1288,8 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
         "rule_set": [
           "category-ads-all"
         ],
-        "server": "dns-block",
-        "disable_cache": true
+        "action": "predefined",
+        "rcode": "NOERROR"
       },
       {
         "package_name": [
@@ -1318,7 +1315,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
       },
       {
         "domain_suffix": [
-          "habr.com",
           "kemono.su",
           "jut.su",
           "kara.su",
@@ -1333,6 +1329,7 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "lesswrong.ru"
         ],
         "domain_keyword": [
+          "habr",
           "animego",
           "yummyanime",
           "yummy-anime",
@@ -1357,7 +1354,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           ".ru.com",
           ".ru.net",
           "${domain}",
-          "wikipedia.org",
           "kudago.com",
           "kinescope.io",
           "redheadsound.studio",
@@ -1462,8 +1458,22 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
       }
     }
   ],
+  "http_clients": [
+    {
+      "tag": "http-direct"
+    },
+    {
+      "tag": "http-proxy",
+      "detour": "proxy"
+    }
+  ],
   "route": {
     "auto_detect_interface": true,
+    "default_http_client": "http-direct",
+    "default_domain_resolver": {
+      "server": "dns-local",
+      "strategy": "prefer_ipv4"
+    },
     "rules": [
       {
         "action": "sniff"
@@ -1507,7 +1517,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
       },
       {
         "domain_suffix": [
-          "habr.com",
           "kemono.su",
           "jut.su",
           "kara.su",
@@ -1522,6 +1531,7 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           "lesswrong.ru"
         ],
         "domain_keyword": [
+          "habr",
           "animego",
           "yummyanime",
           "yummy-anime",
@@ -1546,7 +1556,6 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
           ".ru.com",
           ".ru.net",
           "${domain}",
-          "wikipedia.org",
           "kudago.com",
           "kinescope.io",
           "redheadsound.studio",
@@ -1608,8 +1617,7 @@ cat > /var/www/${subspath}/${user_key}-TRJ-CLIENT.json <<EOF
         "outbound": "direct"
       },
       {
-        "action": "resolve",
-        "strategy": "prefer_ipv4"
+        "action": "resolve"
       },
       {
         "rule_set": [

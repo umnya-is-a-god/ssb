@@ -206,7 +206,6 @@ client_script_add() {
 
 	link="${link}"
 	wget -q -O ${HOME}/sing-box-dir/client.json.1 \${link} && mv -f ${HOME}/sing-box-dir/client.json.1 ${HOME}/sing-box-dir/client.json
-	export ENABLE_DEPRECATED_LEGACY_DNS_SERVERS="true" ENABLE_DEPRECATED_MISSING_DOMAIN_RESOLVER="true"
 	${HOME}/sing-box-dir/sing-box run -c ${HOME}/sing-box-dir/client.json
 	EOF
 

@@ -10,8 +10,6 @@ setlocal enabledelayedexpansion
 rem Ссылка для загрузки клиентской конфигурации (замените на свою)
 set URL=https://example.com/secret175subscr1pt10n/username-VLESS-CLIENT.json
 
-set "ENABLE_DEPRECATED_LEGACY_DNS_SERVERS=true"
-set "ENABLE_DEPRECATED_MISSING_DOMAIN_RESOLVER=true"
 set "SING_BOX_DIR=%~dp0"
 set "SING_BOX_DIR=%SING_BOX_DIR:~0,-1%"
 

@@ -535,7 +535,7 @@ edit_configs_loop() {
             echo "$(jq ".inbounds[${inbound_num}].stack = \"${stack}\" | .outbounds[${outbound_num}].type = \"vless\" | .outbounds[${outbound_num}] |= with_entries(.key |= if . == \"password\" then \"uuid\" else . end) | .outbounds[${outbound_num}].uuid = \"${uuid}\" | .outbounds[${outbound_num}].transport.path = \"/${vlesspath}\"" ${file})" > ${file}
         fi
 
-        [[ -n $cf_ip ]] && echo "$(jq ".outbounds[${outbound_num}].server = \"${cf_ip}\" | .outbounds[${outbound_num}].transport.headers |= {\"Host\":\"${domain}\"} | .route.rule_set[].download_detour = \"proxy\"" ${file})" > ${file}
+        [[ -n $cf_ip ]] && echo "$(jq ".outbounds[${outbound_num}].server = \"${cf_ip}\" | .outbounds[${outbound_num}].transport.headers |= {\"Host\":\"${domain}\"} | .route.default_http_client = \"http-proxy\"" ${file})" > ${file}
         cf_ip=""
     done
 }
@@ -731,7 +731,7 @@ set_cf_ip() {
     for protocol in 'TRJ' 'VLESS'
     do
         outbound_num=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-${protocol}-CLIENT.json)
-        echo "$(jq ".outbounds[${outbound_num}].server = \"${cf_ip}\" | .outbounds[${outbound_num}].transport.headers |= {\"Host\":\"${domain}\"} | .route.rule_set[].download_detour = \"proxy\"" /var/www/${subspath}/${username}-${protocol}-CLIENT.json)" > /var/www/${subspath}/${username}-${protocol}-CLIENT.json
+        echo "$(jq ".outbounds[${outbound_num}].server = \"${cf_ip}\" | .outbounds[${outbound_num}].transport.headers |= {\"Host\":\"${domain}\"} | .route.default_http_client = \"http-proxy\"" /var/www/${subspath}/${username}-${protocol}-CLIENT.json)" > /var/www/${subspath}/${username}-${protocol}-CLIENT.json
     done
 
     echo -e "${info_message[1_$language]}"
@@ -747,7 +747,7 @@ remove_cf_ip() {
     for protocol in 'TRJ' 'VLESS'
     do
         outbound_num=$(jq '[.outbounds[].tag] | index("proxy")' /var/www/${subspath}/${username}-${protocol}-CLIENT.json)
-        echo "$(jq ".outbounds[${outbound_num}].server = \"${domain}\" | del(.outbounds[${outbound_num}].transport.headers, .route.rule_set[].download_detour)" /var/www/${subspath}/${username}-${protocol}-CLIENT.json)" > /var/www/${subspath}/${username}-${protocol}-CLIENT.json
+        echo "$(jq ".outbounds[${outbound_num}].server = \"${domain}\" | del(.outbounds[${outbound_num}].transport.headers) | .route.default_http_client = \"http-direct\"" /var/www/${subspath}/${username}-${protocol}-CLIENT.json)" > /var/www/${subspath}/${username}-${protocol}-CLIENT.json
     done
 
     echo -e "${info_message[1_$language]}"
@@ -1996,7 +1996,7 @@ update_ssb() {
 
     if [[ $update_script =~ '#!/bin/bash' ]]
     then
-        export version="1.4.9" language
+        export version="1.5.0" language
         export -f get_ip templates get_data check_users check_github_template get_pass edit_configs_loop add_rule_sets_loop sync_client_configs_main
         bash <(echo "${update_script}")
         exit 0

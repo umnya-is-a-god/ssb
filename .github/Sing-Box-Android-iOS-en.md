@@ -4,7 +4,7 @@
 
 Android: https://play.google.com/store/apps/details?id=io.nekohasekai.sfa
 
-iOS and macOS: https://apps.apple.com/us/app/sing-box-vt/id6673731168
+iOS and macOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
 
 All OS: https://github.com/SagerNet/sing-box/releases/latest
 

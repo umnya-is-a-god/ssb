@@ -106,12 +106,12 @@
           ".su",
           ".ru.com",
           ".ru.net",
-          "habr.com",
           "ntc.party",
           "canva.com"
         ],
         "domain_keyword": [
           "xn--",
+          "habr",
           "rutracker"
         ],
         "rule_set": [

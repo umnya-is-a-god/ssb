@@ -6,18 +6,15 @@
   "dns": {
     "servers": [
       {
+        "type": "tls",
         "tag": "dns-remote",
-        "address": "tls://1.1.1.1",
+        "server": "1.1.1.1",
         "detour": "proxy"
       },
       {
+        "type": "udp",
         "tag": "dns-local",
-        "address": "195.208.4.1",
-        "strategy": "ipv4_only"
-      },
-      {
-        "tag": "dns-block",
-        "address": "rcode://success"
+        "server": "195.208.4.1"
       }
     ],
     "rules": [
@@ -25,8 +22,8 @@
         "rule_set": [
           "category-ads-all"
         ],
-        "server": "dns-block",
-        "disable_cache": true
+        "action": "predefined",
+        "rcode": "NOERROR"
       },
       {
         "package_name": [
@@ -52,7 +49,6 @@
       },
       {
         "domain_suffix": [
-          "habr.com",
           "kemono.su",
           "jut.su",
           "kara.su",
@@ -67,6 +63,7 @@
           "lesswrong.ru"
         ],
         "domain_keyword": [
+          "habr",
           "animego",
           "yummyanime",
           "yummy-anime",
@@ -91,7 +88,6 @@
           ".ru.com",
           ".ru.net",
           "DOMAIN",
-          "wikipedia.org",
           "kudago.com",
           "kinescope.io",
           "redheadsound.studio",
@@ -196,8 +192,22 @@
       }
     }
   ],
+  "http_clients": [
+    {
+      "tag": "http-direct"
+    },
+    {
+      "tag": "http-proxy",
+      "detour": "proxy"
+    }
+  ],
   "route": {
     "auto_detect_interface": true,
+    "default_http_client": "http-direct",
+    "default_domain_resolver": {
+      "server": "dns-local",
+      "strategy": "prefer_ipv4"
+    },
     "rules": [
       {
         "action": "sniff"
@@ -241,7 +251,6 @@
       },
       {
         "domain_suffix": [
-          "habr.com",
           "kemono.su",
           "jut.su",
           "kara.su",
@@ -256,6 +265,7 @@
           "lesswrong.ru"
         ],
         "domain_keyword": [
+          "habr",
           "animego",
           "yummyanime",
           "yummy-anime",
@@ -280,7 +290,6 @@
           ".ru.com",
           ".ru.net",
           "DOMAIN",
-          "wikipedia.org",
           "kudago.com",
           "kinescope.io",
           "redheadsound.studio",
@@ -342,8 +351,7 @@
         "outbound": "direct"
       },
       {
-        "action": "resolve",
-        "strategy": "prefer_ipv4"
+        "action": "resolve"
       },
       {
         "rule_set": [
