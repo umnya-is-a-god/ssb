@@ -205,8 +205,9 @@ client_script_add() {
 	echo ""
 
 	link="${link}"
-	wget -q -O ${HOME}/sing-box-dir/client.json.1 \${link} && mv -f ${HOME}/sing-box-dir/client.json.1 ${HOME}/sing-box-dir/client.json
-	${HOME}/sing-box-dir/sing-box run -c ${HOME}/sing-box-dir/client.json
+	cd "${HOME}/sing-box-dir" || exit 1
+	wget -q -O client.json.1 \${link} && mv -f client.json.1 client.json
+	./sing-box run -c client.json
 	EOF
 
     chmod +x ~/sing-box-dir/${new_comm}.sh
