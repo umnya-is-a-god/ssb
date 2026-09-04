@@ -12,14 +12,15 @@ set URL=https://example.com/secret175subscr1pt10n/username-VLESS-CLIENT.json
 
 set "SING_BOX_DIR=%~dp0"
 set "SING_BOX_DIR=%SING_BOX_DIR:~0,-1%"
+cd /d "%SING_BOX_DIR%"
 
-if not exist "%SING_BOX_DIR%\sing-box.exe" (
+if not exist sing-box.exe (
     echo Скачивание Sing-Box...
     echo.
     for /f "tokens=2 delims= " %%u in ('curl -Ls https://api.github.com/repos/SagerNet/sing-box/releases/latest ^| findstr browser_download_url ^| findstr windows-amd64.zip') do (set "ZIP_URL=%%~u")
-    curl -L -o "%SING_BOX_DIR%\sing-box.zip" "!ZIP_URL!"
-    tar -xf "%SING_BOX_DIR%\sing-box.zip" --strip-components=1 -C "%SING_BOX_DIR%"
-    del "%SING_BOX_DIR%\sing-box.zip"
+    curl -L -o sing-box.zip "!ZIP_URL!"
+    tar -xf sing-box.zip --strip-components=1
+    del sing-box.zip
     echo.
 )
 
@@ -28,8 +29,8 @@ echo Не закрывайте это окно, пока Sing-Box работае
 echo Нажмите Ctrl + C, чтобы отключиться
 echo.
 
-curl -s -o "%SING_BOX_DIR%\client.json" "%URL%"
-"%SING_BOX_DIR%\sing-box.exe" run -c "%SING_BOX_DIR%\client.json" --disable-color
+curl -s -o client.json "%URL%"
+.\sing-box.exe run -c client.json --disable-color
 ```
 
 > [!IMPORTANT]
