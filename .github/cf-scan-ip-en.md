@@ -32,7 +32,7 @@ chmod +x CloudflareScanner
 For subsequent runs, use:
 
 ```
-cd CloudflareScanner && ./CloudflareScanner
+cd ~/CloudflareScanner && ./CloudflareScanner
 ```
 
 ### Usage on macOS
@@ -78,7 +78,7 @@ chmod +x CloudflareScanner
 For subsequent runs, use:
 
 ```
-cd CloudflareScanner && ./CloudflareScanner
+cd ~/CloudflareScanner && ./CloudflareScanner
 ```
 
 ### Example Output

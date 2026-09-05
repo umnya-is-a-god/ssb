@@ -32,7 +32,7 @@ chmod +x CloudflareScanner
 В дальнейшем используйте эту команду для запуска:
 
 ```
-cd CloudflareScanner && ./CloudflareScanner
+cd ~/CloudflareScanner && ./CloudflareScanner
 ```
 
 ### Использование на macOS
@@ -78,7 +78,7 @@ chmod +x CloudflareScanner
 В дальнейшем используйте эту команду для запуска:
 
 ```
-cd CloudflareScanner && ./CloudflareScanner
+cd ~/CloudflareScanner && ./CloudflareScanner
 ```
 
 ### Пример результата

@@ -93,6 +93,6 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 >
 > In Hiddify settings, specify DNS > Outbound domain strategy > IPv4 only. If some apps are not proxied when using Hiddify: Settings > Inbound > Service mode > VPN.
 
-[Graphical Sing-Box clients](GUI-clients-en.md). For Android, iOS, Windows, Linux and macOS. The guide is given for Android, the settings are similar on other OS.
+[Graphical Sing-Box clients.](GUI-clients-en.md) For Android, iOS, Windows, Linux and macOS. The guide is given for Android, the settings are similar on other OS.
 
-[Sing-Box clients without GUI](NoGUI-clients-en.md). Setup of pure Sing-Box core for Windows and Linux.
+[Sing-Box clients without GUI.](NoGUI-clients-en.md) Setup of pure Sing-Box core for Windows and Linux.
