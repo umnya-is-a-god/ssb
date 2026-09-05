@@ -93,11 +93,6 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 >
 > В настройках Hiddify укажите DNS > Стратегия исходящего домена > Только IPv4. Если при использовании Hiddify не проксируются некоторые приложения: Настройки > Входящие > Режим службы > VPN.
 
-[Android, iOS и macOS](Sing-Box-Android-iOS-ru.md). Инструкция дана для Android, на iOS и macOS интерфейс приложения отличается, но настройки аналогичны.
+[Графические клиенты Sing-Box](GUI-clients-ru.md). Для Android, iOS, Windows, Linux и macOS. Инструкция дана для Android, на других ОС настройки аналогичны.
 
-[Windows](Sing-Box-Windows-ru.md). Данный способ включает настройку чистого ядра Sing-Box и не имеет графичекого интерфейса.
-
-[Linux](#настройка-клиентов). Запустите команду ниже и следуйте инструкциям (не требует sudo).
-```
-bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux.sh); source ~/.bashrc
-```
+[Клиенты Sing-Box без GUI](NoGUI-clients-ru.md). Настройка чистого ядра Sing-Box для Windows и Linux.

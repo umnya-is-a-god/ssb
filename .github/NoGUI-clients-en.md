@@ -1,4 +1,4 @@
-# Setting Up Sing-Box Client on Windows
+# Setting Up Sing-Box Core on Windows
 
 ### 1) In a separate folder, create a .cmd or .bat file with such content:
 
@@ -36,8 +36,6 @@ curl -s -o client.json "%URL%"
 > [!IMPORTANT]
 > Change the link in the 6th line to yours.
 
------
-
 ### 2) Create a shortcut for this .cmd or .bat file
 
 Next, right-click on the shortcut and select «Properties», then go to the «Shortcut» tab:
@@ -46,10 +44,16 @@ Next, right-click on the shortcut and select «Properties», then go to the «Sh
 
 Select «Advanced» and check the «Run as administrator» box (required to start tun interface), then click OK.
 
------
-
 ### 3) Click on the shortcut to connect to the server
 
 Do not close the terminal window while connected to proxy.
 
 To disconnect, click on the terminal window and then press Ctrl + C.
+
+# Setting Up Sing-Box Core on Linux
+
+Run the command below and follow the instructions (does not require sudo).
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux.sh); source ~/.bashrc
+```

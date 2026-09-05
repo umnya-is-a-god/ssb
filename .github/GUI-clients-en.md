@@ -1,16 +1,14 @@
-# Setting Up Sing-Box Client on Android, iOS and macOS
+# Setting Up Graphical Sing-Box Client
 
 ### 1) Install Sing-Box:
 
 Android: https://play.google.com/store/apps/details?id=io.nekohasekai.sfa
 
-iOS and macOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
+iOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
 
-All OS: https://github.com/SagerNet/sing-box/releases/latest
+All OS: https://github.com/SagerNet/sing-box/releases/latest (SFA — Android, SFW — Windows, SFL — Linux, SFM — macOS)
 
 After installing the app, you can use the subscription page for easier setup or import the config link manually (see below).
-
------
 
 ### 2) Open Sing-Box app and import the link:
 
@@ -19,8 +17,6 @@ After installing the app, you can use the subscription page for easier setup or 
 ![a2](https://github.com/user-attachments/assets/a9517306-1f54-47b1-ad22-d5434b03afbb)
 
 Paste your link after step 5.
-
------
 
 ### 3) Check the connection:
 

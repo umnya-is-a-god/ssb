@@ -1,16 +1,14 @@
-# Настройка клиента Sing-Box на Android, iOS и macOS
+# Настройка графического клиента Sing-Box
 
 ### 1) Установите Sing-Box:
 
 Android: https://play.google.com/store/apps/details?id=io.nekohasekai.sfa
 
-iOS и macOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
+iOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
 
-Все ОС: https://github.com/SagerNet/sing-box/releases/latest
+Все ОС: https://github.com/SagerNet/sing-box/releases/latest (SFA — Android, SFW — Windows, SFL — Linux, SFM — macOS)
 
 После установки приложения можно использовать страницу выдачи подписок для более простой настройки или импортировать ссылку на конфиг вручную (см. далее).
-
------
 
 ### 2) Откройте Sing-Box и импортируйте полученную ссылку:
 
@@ -19,8 +17,6 @@ iOS и macOS: https://apps.apple.com/us/app/sing-box-mt/id6785326793
 ![a2](https://github.com/user-attachments/assets/b2d67be7-d984-4e1f-8e87-10fec4f364de)
 
 В пункте 5 вставьте свою ссылку.
-
------
 
 ### 3) Проверьте подключение:
 

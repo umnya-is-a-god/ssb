@@ -93,11 +93,6 @@ warp-cli registration license CMD5m479-Y5hS6y79-U06c5mq9
 >
 > In Hiddify settings, specify DNS > Outbound domain strategy > IPv4 only. If some apps are not proxied when using Hiddify: Settings > Inbound > Service mode > VPN.
 
-[Android, iOS and macOS](Sing-Box-Android-iOS-en.md). The guide is given for Android, the app interface is different on iOS and macOS, but it has similar settings.
+[Graphical Sing-Box clients](GUI-clients-en.md). For Android, iOS, Windows, Linux and macOS. The guide is given for Android, the settings are similar on other OS.
 
-[Windows](Sing-Box-Windows-en.md). This method includes setting up a pure Sing-Box core and does not have a GUI.
-
-[Linux](#client-setup). Run the command below and follow the instructions (does not require sudo).
-```
-bash <(curl -Ls https://raw.githubusercontent.com/A-Zuro/Secret-Sing-Box/master/Scripts/sb-pc-linux.sh); source ~/.bashrc
-```
+[Sing-Box clients without GUI](NoGUI-clients-en.md). Setup of pure Sing-Box core for Windows and Linux.
